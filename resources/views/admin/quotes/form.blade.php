@@ -7,8 +7,7 @@
         @csrf
         <div class="form-group">
             <label>Gambar Quote</label>
-            <input type="file" name="quote_image" class="form-control" accept="image/*">
-            @if (!empty($row->quote_image))<small>File saat ini: {{ $row->quote_image }}</small>@endif
+            @include('partials.file_field', ['name' => 'quote_image', 'accept' => 'image/*', 'current' => $row->quote_image ?? null])
         </div>
         <div class="form-group">
             <label>Urutan</label>

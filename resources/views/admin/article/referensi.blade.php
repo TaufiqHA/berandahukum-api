@@ -4,6 +4,7 @@
 <div class="container">
     <h4>{{ $title }} — {{ $article->article_title }}</h4>
 
+    <div class="table-responsive">
     <table class="table table-sm table-bordered table-striped">
         <thead><tr><th>#</th><th>Sumber</th><th>Judul</th><th>Link</th><th>Urutan</th><th>Aksi</th></tr></thead>
         <tbody>
@@ -19,6 +20,7 @@
         @endforeach
         </tbody>
     </table>
+    </div>
 
     <div class="card">
         <div class="card-header">Tambah Referensi</div>

@@ -68,15 +68,13 @@
             <div class="col-md-6">
                 <div class="form-group">
                     <label>Gambar</label>
-                    <input type="file" name="articleImage" class="form-control" accept="image/*">
-                    @if (!empty($row->article_img))<small>File saat ini: {{ $row->article_img }}</small>@endif
+                    @include('partials.file_field', ['name' => 'articleImage', 'accept' => 'image/*', 'current' => $row->article_img ?? null])
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="form-group">
                     <label>PDF</label>
-                    <input type="file" name="articlePdf" class="form-control" accept="application/pdf">
-                    @if (!empty($row->article_pdf))<small>File saat ini: {{ $row->article_pdf }}</small>@endif
+                    @include('partials.file_field', ['name' => 'articlePdf', 'accept' => 'application/pdf', 'current' => $row->article_pdf ?? null])
                 </div>
             </div>
         </div>

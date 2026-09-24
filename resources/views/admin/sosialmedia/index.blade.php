@@ -9,6 +9,7 @@
     <div class="form-group">
         <label><input type="checkbox" id="toggle-youtube" value="yes" @checked(($setting->show_youtube ?? 'no') === 'yes')> Tampilkan Youtube di beranda</label>
     </div>
+    <div class="table-responsive">
     <table class="table table-sm table-bordered table-striped">
         <thead><tr><th>#</th><th>Nama</th><th>Link</th><th>Urutan</th><th>Aksi</th></tr></thead>
         <tbody>
@@ -26,6 +27,7 @@
         @endforeach
         </tbody>
     </table>
+    </div>
 </div>
 <script>
     document.getElementById('toggle-youtube')?.addEventListener('change', function() {

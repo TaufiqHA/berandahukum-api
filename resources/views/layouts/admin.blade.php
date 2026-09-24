@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="{{ base_url('assets/datatables/responsive/responsive.bootstrap4.min.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
     <link rel="stylesheet" href="{{ url("css/site.css?v=11") }}">
-    <link rel="stylesheet" href="{{ url("css/admin.css?v=2") }}">
+    <link rel="stylesheet" href="{{ url("css/admin.css?v=8") }}">
     <style>
         textarea#articleEditor { height: 350px; }
     </style>
@@ -46,16 +46,22 @@
 <body class="admin">
     <div class="admin-shell">
         @include('partials.admin_menu')
+        <div class="admin-backdrop" id="adminBackdrop" hidden></div>
 
         <div class="admin-main">
             <header class="admin-topbar">
-                <button class="admin-burger" type="button" aria-label="Buka menu" aria-controls="adminSidebar">
+                <button class="admin-burger" type="button" aria-label="Buka menu" aria-controls="adminSidebar" aria-expanded="false">
                     <i class="fa fa-bars"></i>
                 </button>
                 <span class="admin-topbar__title">@yield('title', 'Admin Panel')</span>
                 <div class="admin-topbar__right">
-                    <span class="admin-topbar__user"><i class="fa fa-user-circle-o"></i> {{ auth()->user()->user_name ?? '' }}</span>
-                    <a class="btn btn-sm" href="{{ site_admin('logout') }}">Keluar</a>
+                    <span class="admin-user" title="{{ auth()->user()->user_name ?? '' }}">
+                        <span class="admin-user__avatar"><i class="fa fa-user"></i></span>
+                        <span class="admin-user__name">{{ auth()->user()->user_name ?? '' }}</span>
+                    </span>
+                    <a class="admin-logout" href="{{ site_admin('logout') }}">
+                        <i class="fa fa-sign-out"></i><span>Keluar</span>
+                    </a>
                 </div>
             </header>
 
@@ -69,8 +75,65 @@
     </div>
 
     <script>
-        document.querySelector('.admin-burger')?.addEventListener('click', function () {
-            document.getElementById('adminSidebar')?.classList.toggle('is-open');
+        (function () {
+            var sidebar = document.getElementById('adminSidebar');
+            var burger = document.querySelector('.admin-burger');
+            var backdrop = document.getElementById('adminBackdrop');
+
+            function setOpen(open) {
+                if (!sidebar) return;
+                sidebar.classList.toggle('is-open', open);
+                if (backdrop) {
+                    backdrop.hidden = !open;
+                    backdrop.classList.toggle('is-active', open);
+                }
+                if (burger) burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+            }
+
+            function isMobile() {
+                return window.matchMedia('(max-width: 900px)').matches;
+            }
+
+            burger?.addEventListener('click', function () {
+                setOpen(!sidebar.classList.contains('is-open'));
+            });
+
+            // Klik di luar sidebar (area gelap / konten) menutup sidebar.
+            backdrop?.addEventListener('click', function () { setOpen(false); });
+
+            // Klik di area konten juga menutup sidebar saat mode mobile.
+            document.querySelector('.admin-main')?.addEventListener('click', function (e) {
+                if (isMobile() && sidebar.classList.contains('is-open')) {
+                    if (!e.target.closest('.admin-burger')) setOpen(false);
+                }
+            });
+
+            // Tekan Esc untuk menutup.
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && sidebar.classList.contains('is-open')) setOpen(false);
+            });
+
+            // Tutup otomatis saat layar kembali ke desktop.
+            window.addEventListener('resize', function () {
+                if (!isMobile()) setOpen(false);
+            });
+        })();
+    </script>
+    <script>
+        // Tampilkan nama file yang dipilih pada field upload.
+        document.querySelectorAll('.file-field__input').forEach(function (input) {
+            input.addEventListener('change', function () {
+                var label = input.closest('.file-field')?.querySelector('.file-field__name');
+                if (!label) return;
+                var file = input.files && input.files.length ? input.files[0] : null;
+                if (file) {
+                    label.textContent = file.name;
+                    label.classList.add('has-file');
+                } else {
+                    label.textContent = label.dataset.empty || 'Belum ada file dipilih';
+                    label.classList.remove('has-file');
+                }
+            });
         });
     </script>
     <script>

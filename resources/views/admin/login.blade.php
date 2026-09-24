@@ -6,9 +6,8 @@
     <meta name="robots" content="noindex">
     <meta name="googlebot" content="noindex">
     <title>Login — Admin Panel</title>
-    <link rel="stylesheet" href="{{ base_url('assets/css/style-admin.css?v=0.0.1') }}">
     <link rel="stylesheet" href="{{ url('css/site.css?v=1') }}">
-    <link rel="stylesheet" href="{{ url('css/admin.css?v=1') }}">
+    <link rel="stylesheet" href="{{ url('css/admin.css?v=8') }}">
     @if (! config('beranda.disable_recaptcha'))
         <script src='https://www.google.com/recaptcha/api.js'></script>
     @endif
@@ -47,10 +46,15 @@
         </div>
     </main>
     <style>
-        .auth { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: var(--s5); background: var(--n-50); }
+        body.admin { padding-top: 0; }
+        .auth { min-height: 100vh; min-height: 100dvh; display: flex; align-items: center; justify-content: center; padding: var(--s5); background: var(--n-50); }
         .auth__card { width: 100%; max-width: 400px; background: var(--n-0); border: 1px solid var(--n-200); border-top: 4px solid var(--brand); padding: var(--s6); }
         .auth__head { display: flex; flex-direction: column; gap: var(--s2); margin-bottom: var(--s5); }
         .auth__head img { height: 36px; width: auto; }
+        @media (max-width: 600px) {
+            .auth { padding: var(--s4); }
+            .auth__card { padding: var(--s5); }
+        }
     </style>
 </body>
 </html>

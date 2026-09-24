@@ -6,6 +6,7 @@
         <h4>{{ $title }}</h4>
         <a href="{{ site_admin('pilihan/add') }}" class="btn btn-primary btn-sm">Tambah</a>
     </div>
+    <div class="table-responsive">
     <table class="table table-sm table-bordered table-striped">
         <thead><tr><th>#</th><th>Posisi</th><th>Artikel</th><th>Urutan</th><th>Aksi</th></tr></thead>
         <tbody>
@@ -23,5 +24,6 @@
         @endforeach
         </tbody>
     </table>
+    </div>
 </div>
 @endsection

@@ -33,8 +33,7 @@
         </div>
         <div class="form-group">
             <label>Upload Gambar</label>
-            <input type="file" name="adsFile" class="form-control">
-            @if (!empty($pop->ads_url))<small>File saat ini: {{ $pop->ads_url }}</small>@endif
+            @include('partials.file_field', ['name' => 'adsFile', 'accept' => 'image/*', 'current' => $pop->ads_url ?? null])
         </div>
         <div class="form-group">
             <label>URL / Konten Embed</label>

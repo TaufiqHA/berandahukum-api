@@ -3,6 +3,7 @@
 @section('content')
 <div class="container">
     <h4>{{ $title }} — {{ $article->article_title }}</h4>
+    <div class="table-responsive">
     <table class="table table-sm table-bordered table-striped">
         <thead><tr><th>#</th><th>Nama</th><th>Komentar</th><th>Tanggal</th><th>Status</th><th>Aksi</th></tr></thead>
         <tbody>
@@ -25,6 +26,7 @@
         @endforeach
         </tbody>
     </table>
+    </div>
     <a href="{{ site_admin('article') }}" class="btn btn-secondary">Kembali</a>
 </div>
 @endsection

@@ -3,6 +3,7 @@
 @section('content')
 <div class="container">
     <h4>{{ $title }}</h4>
+    <div class="table-responsive">
     <table class="table table-sm table-bordered table-striped">
         <thead><tr><th>#</th><th>Nama</th><th>Email</th><th>HP</th><th>Pesan</th><th>Tanggal</th></tr></thead>
         <tbody>
@@ -18,5 +19,6 @@
         @endforeach
         </tbody>
     </table>
+    </div>
 </div>
 @endsection

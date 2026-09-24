@@ -15,8 +15,7 @@
         </div>
         <div class="form-group">
             <label>Gambar</label>
-            <input type="file" name="file_banner" class="form-control" accept="image/*">
-            @if (!empty($row->file_banner))<small>File saat ini: {{ $row->file_banner }}</small>@endif
+            @include('partials.file_field', ['name' => 'file_banner', 'accept' => 'image/*', 'current' => $row->file_banner ?? null])
         </div>
         <div class="form-group">
             <label>Urutan</label>

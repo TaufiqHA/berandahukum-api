@@ -30,8 +30,7 @@
         </div>
         <div class="form-group">
             <label>Upload Gambar</label>
-            <input type="file" name="adsFile" class="form-control">
-            @if (!empty($row->ads_url))<small>File saat ini: {{ $row->ads_url }}</small>@endif
+            @include('partials.file_field', ['name' => 'adsFile', 'accept' => 'image/*', 'current' => $row->ads_url ?? null])
         </div>
         <div class="form-group">
             <label>URL / Kode Embed</label>

@@ -6,6 +6,7 @@
         <h4>{{ $title }}</h4>
         <a href="{{ site_admin('sub-category/add') }}" class="btn btn-primary btn-sm">Tambah</a>
     </div>
+    <div class="table-responsive">
     <table class="table table-sm table-bordered table-striped">
         <thead><tr><th>#</th><th>Kategori</th><th>Sub Kategori</th><th>URI</th><th>Tampil</th><th>Aksi</th></tr></thead>
         <tbody>
@@ -24,5 +25,6 @@
         @endforeach
         </tbody>
     </table>
+    </div>
 </div>
 @endsection
