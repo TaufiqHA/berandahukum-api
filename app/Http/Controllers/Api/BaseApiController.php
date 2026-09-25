@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Ads;
 use App\Models\Article;
 use App\Models\Category;
 use App\Models\Comment;
@@ -67,6 +68,11 @@ abstract class BaseApiController extends Controller
         $data = $this->articleSummary($a);
         $data['content'] = $a['article_content'] ?? '';
         $data['pdf'] = $a['article_pdf'] ?: null;
+
+        // Iklan di atas artikel (antara AppBar & judul), maksimal 2.
+        $data['ads_atas'] = Ads::where('ads_position', 103)->where('ads_status', '1')
+            ->where('ads_type', 0)->where('ads_file_type', 0)->orderBy('ads_id')
+            ->limit(2)->get()->map(fn ($ad) => $this->adImage($ad))->filter()->values()->all();
 
         $data['categories'] = \Illuminate\Support\Facades\DB::table('tbl_article_category as ac')
             ->leftJoin('tbl_category as c', 'ac.category_id', '=', 'c.category_id')

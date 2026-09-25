@@ -63,6 +63,29 @@ class HomeController extends BaseApiController
         $banners = collect([9, 10, 16, 17, 18, 19, 20])
             ->map(fn ($p) => $ad($p))->filter()->values()->all();
 
+        // Iklan antar-kategori (khusus aplikasi mobile, posisi 100).
+        $adsKategori = Ads::where('ads_position', 100)->where('ads_status', '1')
+            ->where('ads_type', 0)->where('ads_file_type', 0)->orderBy('ads_id')
+            ->get()->map(function ($a) {
+                $data = $this->adImage($a);
+                if ($data === null) {
+                    return null;
+                }
+                $data['category_id'] = $a->ads_category_id ? (int) $a->ads_category_id : null;
+
+                return $data;
+            })->filter()->values()->all();
+
+        // Iklan atas beranda (antara banner atas & carousel), maksimal 2.
+        $adsAtas = Ads::where('ads_position', 102)->where('ads_status', '1')
+            ->where('ads_type', 0)->where('ads_file_type', 0)->orderBy('ads_id')
+            ->limit(2)->get()->map(fn ($a) => $this->adImage($a))->filter()->values()->all();
+
+        // Iklan bawah beranda (sebelum footer), maksimal 3.
+        $adsBawah = Ads::where('ads_position', 101)->where('ads_status', '1')
+            ->where('ads_type', 0)->where('ads_file_type', 0)->orderBy('ads_id')
+            ->limit(3)->get()->map(fn ($a) => $this->adImage($a))->filter()->values()->all();
+
         $sys = SysSetting::first();
 
         return response()->json([
@@ -76,6 +99,9 @@ class HomeController extends BaseApiController
             'ads_top' => $ad(2),
             'ads_middle' => $ad(12),
             'banners' => $banners,
+            'ads_kategori' => $adsKategori,
+            'ads_atas' => $adsAtas,
+            'ads_bawah' => $adsBawah,
             'ads_bottom' => $ad(7),
             'show_pertanyaan' => ($sys->show_pertanyaan ?? '1') === '1',
             'show_youtube' => ($sys->show_youtube ?? '1') === '1',

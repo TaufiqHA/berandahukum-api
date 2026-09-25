@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Admin\AdsController as AdminAdsController;
 use App\Http\Controllers\Api\Admin\ArticleController as AdminArticleController;
 use App\Http\Controllers\Api\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Api\Admin\CategoryController as AdminCategoryController;
@@ -101,6 +102,12 @@ Route::prefix('v1/admin')->group(function () {
             Route::post('sub-categories', [AdminSubCategoryController::class, 'store']);
             Route::post('sub-categories/{id}', [AdminSubCategoryController::class, 'update'])->whereNumber('id');
             Route::delete('sub-categories/{id}', [AdminSubCategoryController::class, 'destroy'])->whereNumber('id');
+
+            // Iklan antar-kategori (khusus aplikasi mobile, posisi 100)
+            Route::get('ads', [AdminAdsController::class, 'index']);
+            Route::post('ads', [AdminAdsController::class, 'store']);
+            Route::post('ads/{id}', [AdminAdsController::class, 'update'])->whereNumber('id');
+            Route::delete('ads/{id}', [AdminAdsController::class, 'destroy'])->whereNumber('id');
 
             // Slider / sorotan beranda (tbl_pilihan posisi "top")
             Route::get('slider', [AdminSliderController::class, 'index']);
