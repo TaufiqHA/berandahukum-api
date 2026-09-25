@@ -44,6 +44,9 @@ widget sidebar, tombol/field kotak, alert, komentar, pagination, popup, empty st
 Bahasa desain yang sama, disesuaikan untuk UI fungsional:
 - Kerangka **sidebar** (264px) + topbar + konten; sidebar mengecil jadi drawer di <900px.
 - Grup navigasi berlabel kapital: Utama, Konten, Interaksi, Data Master, Setting.
+- **Tata Letak Beranda** (`admin/layout`): seret untuk mengurutkan + centang untuk
+  menampilkan/menyembunyikan section beranda; disimpan di `tbl_settings`
+  (`tipe="layout"`, nama `home`) sebagai JSON dan dibaca `App\Services\HomeLayout`.
 - Tabel rapat (header kapital bergaris), form label kapital, tombol/merah brand,
   kartu ringkasan `.stat` bernilai serif.
 - Override Bootstrap 4 (dipakai admin asset) via `admin.css`; token dari `site.css`.
@@ -70,7 +73,9 @@ visual tetap Modern Magazine):
   `.home > * { min-width: 0 }` + `overflow-x: hidden` mencegah `.wrap` memuai
   mengikuti lebar trek slider (yang membuat gambar carousel terpotong).
 - **Kategori**: daftar/grid desktop diganti kartu — header bergaris merah atas +
-  baris subkategori berchevron (`▾`). Urutan kategori memakai kolom `urutan`.
+  baris subkategori berchevron (`▾`). Klik baris sub-kategori membuka **dropdown**
+  berisi daftar artikelnya (diambil dari `GET /api/v1/subcategories/{uri}`).
+  Urutan kategori memakai kolom `urutan`.
 - **Footer**: logo terpusat, lalu kolom Informasi & Follow Us berdampingan.
 Implementasi: `resources/views/partials/category_cards.blade.php`,
 `resources/views/front/home.blade.php`, dan blok `@media (max-width: 720px)`

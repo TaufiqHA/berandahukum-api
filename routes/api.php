@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\Admin\CategoryController as AdminCategoryController
 use App\Http\Controllers\Api\Admin\CommentController as AdminCommentController;
 use App\Http\Controllers\Api\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Api\Admin\LabelController as AdminLabelController;
+use App\Http\Controllers\Api\Admin\LayoutController as AdminLayoutController;
 use App\Http\Controllers\Api\Admin\QuestionController as AdminQuestionController;
 use App\Http\Controllers\Api\Admin\SettingsController as AdminSettingsController;
 use App\Http\Controllers\Api\Admin\SliderController as AdminSliderController;
@@ -113,6 +114,10 @@ Route::prefix('v1/admin')->group(function () {
             Route::post('labels', [AdminLabelController::class, 'store']);
             Route::post('labels/{id}', [AdminLabelController::class, 'update'])->whereNumber('id');
             Route::delete('labels/{id}', [AdminLabelController::class, 'destroy'])->whereNumber('id');
+
+            // Tata letak beranda
+            Route::get('layout', [AdminLayoutController::class, 'index']);
+            Route::post('layout', [AdminLayoutController::class, 'save']);
 
             Route::get('users', [AdminUserController::class, 'index']);
             Route::post('users', [AdminUserController::class, 'store']);

@@ -5,7 +5,7 @@
             <p class="muted small">Wadah untuk belajar hukum, menambah wawasan, dan berbagi tentang hukum.</p>
         </div>
 
-        <div>
+        <div class="footer-col footer-col--info">
             <h2>Informasi</h2>
             <ul>
                 @foreach ($frontFooterInfo as $r)
@@ -16,7 +16,7 @@
             </ul>
         </div>
 
-        <div>
+        <div class="footer-col footer-col--follow">
             <h2>Ikuti Kami</h2>
             <div class="footer-sosial">
                 @foreach ($frontFooterSosial as $f)

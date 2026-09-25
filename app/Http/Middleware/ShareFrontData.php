@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Services\FrontService;
+use App\Services\HomeLayout;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
@@ -55,6 +56,7 @@ class ShareFrontData
             'frontPopStatus' => $popStatus,
             'frontPopupView' => $popupView,
             'frontService' => $this->front,
+            'frontHomeLayout' => HomeLayout::get(),
         ]);
 
         return $next($request);

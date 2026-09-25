@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\ContactController as AdminContactController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\KomentarController;
 use App\Http\Controllers\Admin\LabelController;
+use App\Http\Controllers\Admin\LayoutController;
 use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\PertanyaanController as AdminPertanyaanController;
 use App\Http\Controllers\Admin\PilihanController;
@@ -154,6 +155,9 @@ Route::prefix('admin')->middleware('auth')->group(function () {
         Route::post('popup', [PopupController::class, 'update']);
 
         Route::match(['get', 'post'], 'settingscategory', [SettingscategoryController::class, 'index']);
+
+        Route::get('layout', [LayoutController::class, 'index']);
+        Route::post('layout', [LayoutController::class, 'save']);
 
         Route::get('menu', [MenuController::class, 'index']);
         Route::get('menu/add', [MenuController::class, 'create']);

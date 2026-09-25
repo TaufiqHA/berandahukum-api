@@ -226,7 +226,8 @@ p { margin: 0 0 1em; text-wrap: pretty; }
 .side .ad { margin: 0 0 var(--s4); }
 
 /* ============ Urutan beranda & kartu kategori (layout mobile) ============ */
-/* Urutan beranda mobile: blok khusus mobile disembunyikan di desktop */
+/* Blok khusus mobile disembunyikan di desktop */
+.home__top-ad,
 .home__hash,
 .home__foot-ad { display: none; }
 
@@ -240,9 +241,15 @@ p { margin: 0 0 1em; text-wrap: pretty; }
 .catcard__head { margin: 0; padding: var(--s4); border-top: 3px solid var(--brand); border-bottom: 1px solid var(--n-200); font-family: var(--font-sans); font-size: 1rem; font-weight: 700; }
 .catcard__head a { color: var(--n-900); }
 .catcard__body { display: grid; gap: var(--s3); padding: var(--s4); }
-.catcard__row { display: flex; align-items: center; justify-content: space-between; gap: var(--s2); padding: 12px 14px; border: 1px solid var(--n-200); font-size: .95rem; color: var(--n-700); }
-.catcard__row::after { content: "\25BE"; font-size: .8rem; color: var(--n-500); }
-.catcard__row:hover { border-color: var(--brand); color: var(--brand); text-decoration: none; }
+.catcard__row { display: flex; align-items: center; justify-content: space-between; gap: var(--s2); width: 100%; padding: 12px 14px; border: 1px solid var(--n-200); background: var(--n-0); font-family: inherit; font-size: .95rem; color: var(--n-700); text-align: left; cursor: pointer; }
+.catcard__row:hover { border-color: var(--brand); color: var(--brand); }
+.catcard__row.is-open { border-color: var(--brand); color: var(--brand); }
+.catcard__chev { font-size: .8rem; line-height: 1; color: var(--n-500); transition: transform .2s ease; }
+.catcard__row.is-open .catcard__chev { transform: rotate(180deg); }
+.catcard__menu { border: 1px solid var(--n-200); border-top: 0; background: var(--n-25); padding: 6px 0; }
+.catcard__menu a { display: block; padding: 9px 14px; font-size: .9rem; color: var(--n-600); }
+.catcard__menu a:hover { background: var(--brand-soft); color: var(--brand-strong); text-decoration: none; }
+.catcard__loading { padding: 10px 14px; font-size: .85rem; color: var(--n-500); }
 
 /* ============ Article ============ */
 .article { max-width: var(--measure); }
@@ -343,24 +350,19 @@ p { margin: 0 0 1em; text-wrap: pretty; }
     .site-header__bar > .search { display: none; }
     .sectionbar { display: none; }
 
-    /* Urutan beranda: banner -> carousel -> # -> tile -> kartu kategori -> iklan.
-       min-width:0 + overflow-x penting: cegah .wrap (flex item) memuai mengikuti
-       lebar trek slider sehingga gambar carousel terpotong. */
-    .home { display: flex; flex-direction: column; overflow-x: hidden; }
-    .home > * { min-width: 0; }
+    /* Tata letak beranda mengikuti urutan dari admin. Kelas di bawah hanya
+       mengatur tampil/sembunyi per perangkat. */
+    .home { overflow-x: hidden; }
+    .home-extra { display: none !important; }
+    .home__top-ad,
+    .home__hash,
+    .home__foot-ad { display: block; }
 
     /* Carousel benar-benar responsif: paksa semua lapisan selebar viewport */
     .home__hero, .slider, .slider__viewport { width: 100%; max-width: 100%; }
     .slider__track { width: 100%; max-width: 100%; }
     .slide { min-width: 100%; max-width: 100%; }
     .slide__media img { width: 100%; max-width: 100%; height: auto; }
-    .home-extra { display: none !important; }
-    .home__top-ad { display: block; order: 1; }
-    .home__hero { order: 2; }
-    .home__hash { display: block; order: 3; }
-    .home__tiles { order: 4; }
-    .home__cats { order: 5; }
-    .home__foot-ad { display: block; order: 6; }
     .home__tiles .section__head,
     .home__cats .section__head { display: none; }
     .home__tiles, .home__cats { padding: var(--s5) 0; }
@@ -389,10 +391,16 @@ p { margin: 0 0 1em; text-wrap: pretty; }
     .grid--2, .grid--3, .grid--4, .grid--asym, .grid-2, .grid-3 { grid-template-columns: 1fr; }
     .story--compact, .card--row { grid-template-columns: 110px 1fr; }
 
-    /* Footer: logo terpusat, lalu Informasi & Follow Us berdampingan */
-    .site-footer__grid { grid-template-columns: 1fr 1fr; }
+    /* Footer mobile: logo + hak cipta, lalu Informasi (baris atas) & Ikuti Kami (baris bawah) */
+    .site-footer__grid { grid-template-columns: 1fr; gap: var(--s5); }
     .footer-brand { grid-column: 1 / -1; text-align: center; }
     .footer-brand img { margin: 0 auto var(--s3); }
+    /* Daftar Informasi jadi 2 kolom, teks di tengah */
+    .footer-col { text-align: center; }
+    .site-footer ul { display: grid; grid-template-columns: 1fr 1fr; column-gap: var(--s4); }
+    /* Ikon Ikuti Kami: ukuran tetap, jarak rapat, di tengah, beri margin bawah */
+    .footer-sosial { display: flex; justify-content: center; gap: var(--s2); margin-bottom: var(--s5); }
+    .footer-sosial a { flex: 0 0 auto; width: 38px; height: 38px; }
 
     .article__body, .prose { font-size: 1.06rem; }
     h1 { font-size: clamp(1.8rem, 8vw, 2.4rem); }

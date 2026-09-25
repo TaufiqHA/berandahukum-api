@@ -66,6 +66,18 @@ Mengatur artikel yang tampil pada slider beranda (`tbl_pilihan`, `posisi = "top"
 | DELETE | `slider/{id}` | Hapus dari slider |
 | POST | `slider/urutan` | Simpan urutan: `{position:[id,id,…]}` |
 
+### Tata letak beranda
+
+Mengatur urutan + tampil/sembunyikan section beranda (sama seperti menu
+"Tata Letak Beranda" di admin web; data disimpan di `tbl_settings`):
+
+| Metode | Endpoint | Keterangan |
+|--------|----------|------------|
+| GET | `layout` | Daftar section → `{data:[{key,label,scope,enabled}]}` |
+| POST | `layout` | Simpan: `{items:[{key,enabled},…]}` (urutan mengikuti array) |
+
+`scope`: `both` \| `mobile` \| `desktop` — hanya penanda di mana section tampil.
+
 Status HTTP: `401` belum/kadaluarsa token, `403` bukan admin, `422` validasi.
 
 ## Contoh

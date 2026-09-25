@@ -44,6 +44,7 @@
                 <a href="{{ site_admin('slider') }}" class="{{ $is('slider') ? 'is-active' : '' }}"><i class="fa fa-play-circle"></i> Slider (Sorotan)</a>
                 <a href="{{ site_admin('pilihan') }}" class="{{ $is('pilihan') ? 'is-active' : '' }}"><i class="fa fa-star-o"></i> Artikel Pilihan</a>
                 <a href="{{ site_admin('settingscategory') }}" class="{{ $is('settingscategory') ? 'is-active' : '' }}"><i class="fa fa-sort-numeric-asc"></i> Urutan Kategori</a>
+                <a href="{{ site_admin('layout') }}" class="{{ $is('layout') ? 'is-active' : '' }}"><i class="fa fa-th-large"></i> Tata Letak Beranda</a>
                 <a href="{{ site_admin('settings') }}" class="{{ $is('settings') ? 'is-active' : '' }}"><i class="fa fa-info-circle"></i> Informasi</a>
                 <a href="{{ site_admin('sosialmedia') }}" class="{{ $is('sosialmedia') ? 'is-active' : '' }}"><i class="fa fa-share-alt"></i> Sosial Media</a>
                 <a href="{{ site_admin('settingemail/edit') }}" class="{{ $is('settingemail') ? 'is-active' : '' }}"><i class="fa fa-envelope"></i> Setting Email</a>
