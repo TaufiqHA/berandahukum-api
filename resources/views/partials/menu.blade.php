@@ -2,7 +2,7 @@
     <div class="site-header__top">
         <div class="wrap site-header__bar">
             <a class="brand" href="{{ site_url() }}">
-                <img src="{{ base_url('berandahukum.svg') }}" alt="Beranda Hukum">
+                <img src="{{ base_url('berandahukum.svg') }}" alt="Beranda Hukum — Media Belajar Hukum">
             </a>
 
             <nav class="nav" id="primary-nav" aria-label="Menu utama">

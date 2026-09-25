@@ -13,15 +13,16 @@ class TaxonomyController extends BaseApiController
 {
     public function categories()
     {
-        return response()->json(Category::orderBy('urutan')->get()->map(fn ($c) => [
+        return response()->json(Category::where('category_show', 'yes')->orderBy('urutan')->get()->map(fn ($c) => [
             'id' => (int) $c->category_id,
             'name' => $c->category_name,
             'uri' => $c->category_uri,
-            'subs' => SubCategory::where('category_id', $c->category_id)->orderBy('sub_category_id')->get()->map(fn ($s) => [
-                'id' => (int) $s->sub_category_id,
-                'name' => $s->sub_category_name,
-                'uri' => $s->sub_category_uri,
-            ])->all(),
+            'subs' => SubCategory::where('category_id', $c->category_id)->where('sub_category_show', 'yes')
+                ->orderBy('sub_category_id')->get()->map(fn ($s) => [
+                    'id' => (int) $s->sub_category_id,
+                    'name' => $s->sub_category_name,
+                    'uri' => $s->sub_category_uri,
+                ])->all(),
         ])->all());
     }
 

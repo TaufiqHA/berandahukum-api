@@ -92,7 +92,6 @@ p { margin: 0 0 1em; text-wrap: pretty; }
 .search input:focus { border-color: var(--n-900); outline: none; }
 .search button { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 38px; border: 1px solid var(--n-300); background: var(--n-0); color: var(--n-800); cursor: pointer; }
 .search button:hover { background: var(--n-900); color: #fff; border-color: var(--n-900); }
-.nav-toggle { display: none; margin-left: auto; background: var(--n-0); border: 1px solid var(--n-300); width: 44px; height: 40px; cursor: pointer; color: var(--n-800); }
 
 /* Bar section tipis di bawah masthead */
 .sectionbar { border-top: 1px solid var(--n-200); background: var(--n-25); }
@@ -226,6 +225,25 @@ p { margin: 0 0 1em; text-wrap: pretty; }
 .widget select { width: 100%; padding: 9px 10px; border: 1px solid var(--n-300); background: var(--n-0); color: var(--n-700); }
 .side .ad { margin: 0 0 var(--s4); }
 
+/* ============ Urutan beranda & kartu kategori (layout mobile) ============ */
+/* Urutan beranda mobile: blok khusus mobile disembunyikan di desktop */
+.home__hash,
+.home__foot-ad { display: none; }
+
+.divider-hash { display: flex; align-items: center; gap: var(--s3); margin: var(--s5) 0; }
+.divider-hash span { font-family: var(--font-serif); font-size: 1.3rem; line-height: 1; color: var(--n-700); }
+.divider-hash::after { content: ""; flex: 1 1 auto; height: 1px; background: var(--n-200); }
+
+/* Kartu kategori (dipakai mobile) */
+.catcards { display: none; }
+.catcard { margin-bottom: var(--s4); border: 1px solid var(--n-200); background: var(--n-0); }
+.catcard__head { margin: 0; padding: var(--s4); border-top: 3px solid var(--brand); border-bottom: 1px solid var(--n-200); font-family: var(--font-sans); font-size: 1rem; font-weight: 700; }
+.catcard__head a { color: var(--n-900); }
+.catcard__body { display: grid; gap: var(--s3); padding: var(--s4); }
+.catcard__row { display: flex; align-items: center; justify-content: space-between; gap: var(--s2); padding: 12px 14px; border: 1px solid var(--n-200); font-size: .95rem; color: var(--n-700); }
+.catcard__row::after { content: "\25BE"; font-size: .8rem; color: var(--n-500); }
+.catcard__row:hover { border-color: var(--brand); color: var(--brand); text-decoration: none; }
+
 /* ============ Article ============ */
 .article { max-width: var(--measure); }
 .article__title { margin-bottom: var(--s3); }
@@ -316,15 +334,67 @@ p { margin: 0 0 1em; text-wrap: pretty; }
 @media (max-width: 720px) {
     .band { padding: var(--s6) 0; }
     .wrap { padding: 0 var(--s5); }
+
+    /* Masthead: logo penuh */
     .nav { display: none !important; }
-    .site-header__bar { flex-wrap: wrap; padding: var(--s4) var(--s5); }
-    .search { display: flex; width: 100%; margin: var(--s4) 0 0; }
-    .search input { flex: 1; max-width: none; }
+    .site-header__bar { flex-wrap: wrap; align-items: center; gap: var(--s3); padding: var(--s4) var(--s5); min-height: 0; }
+    .brand { flex: 1 1 100%; }
+    .brand img { width: 100%; max-width: 340px; height: auto; }
+    .site-header__bar > .search { display: none; }
+    .sectionbar { display: none; }
+
+    /* Urutan beranda: banner -> carousel -> # -> tile -> kartu kategori -> iklan.
+       min-width:0 + overflow-x penting: cegah .wrap (flex item) memuai mengikuti
+       lebar trek slider sehingga gambar carousel terpotong. */
+    .home { display: flex; flex-direction: column; overflow-x: hidden; }
+    .home > * { min-width: 0; }
+
+    /* Carousel benar-benar responsif: paksa semua lapisan selebar viewport */
+    .home__hero, .slider, .slider__viewport { width: 100%; max-width: 100%; }
+    .slider__track { width: 100%; max-width: 100%; }
+    .slide { min-width: 100%; max-width: 100%; }
+    .slide__media img { width: 100%; max-width: 100%; height: auto; }
+    .home-extra { display: none !important; }
+    .home__top-ad { display: block; order: 1; }
+    .home__hero { order: 2; }
+    .home__hash { display: block; order: 3; }
+    .home__tiles { order: 4; }
+    .home__cats { order: 5; }
+    .home__foot-ad { display: block; order: 6; }
+    .home__tiles .section__head,
+    .home__cats .section__head { display: none; }
+    .home__tiles, .home__cats { padding: var(--s5) 0; }
+    .home__tiles .grid { gap: var(--s3); }
+    /* Semua banner/iklan di tile diposisikan di tengah */
+    .home__tiles .ad { display: flex; justify-content: center; margin: 0; }
+    .home__tiles .ad a { display: block; max-width: 100%; }
+    .home__tiles .ad img { margin-left: auto; margin-right: auto; }
+
+    /* Konten kategori: kartu accordion menggantikan daftar/grid */
+    .cats-desktop { display: none !important; }
+    .catcards { display: grid; }
+
+    /* Carousel: bar caption menempel di bawah gambar */
+    .slide__body { padding: var(--s4); background: var(--n-900); color: var(--n-0); }
+    .slide__body h2 { color: var(--n-0); }
+    .slide__body .kicker { color: rgba(255, 255, 255, .78); }
+    .slide__body .story__meta { color: rgba(255, 255, 255, .7); }
+    /* Caption mobile hanya judul + penulis (label "Sorotan" & tanggal dihapus) */
+    .slide__label, .slide__date, .slide__sep { display: none; }
+    .slide__body .slide__meta { text-transform: none; letter-spacing: 0; gap: 0; font-size: .98rem; }
+    .slider__btn { width: 40px; height: 56px; top: 44%; background: rgba(17, 17, 16, .5); color: #fff; }
+    .slider__btn:hover { background: rgba(17, 17, 16, .72); }
+    .slider__footer { display: none; }
+
     .grid--2, .grid--3, .grid--4, .grid--asym, .grid-2, .grid-3 { grid-template-columns: 1fr; }
     .story--compact, .card--row { grid-template-columns: 110px 1fr; }
-    .site-footer__grid { grid-template-columns: 1fr; }
+
+    /* Footer: logo terpusat, lalu Informasi & Follow Us berdampingan */
+    .site-footer__grid { grid-template-columns: 1fr 1fr; }
+    .footer-brand { grid-column: 1 / -1; text-align: center; }
+    .footer-brand img { margin: 0 auto var(--s3); }
+
     .article__body, .prose { font-size: 1.06rem; }
-    .slide__body { padding: var(--s4) var(--s4) var(--s4); }
     h1 { font-size: clamp(1.8rem, 8vw, 2.4rem); }
 }
 

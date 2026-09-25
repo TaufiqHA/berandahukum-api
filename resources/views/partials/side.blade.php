@@ -8,7 +8,7 @@
     @endforeach
 
     @if (!empty($frontCategoriesTree))
-        <div class="widget">
+        <div class="widget cats-desktop">
             <h2>Kategori</h2>
             <ul>
                 @foreach ($frontCategoriesTree as $cat)
@@ -25,5 +25,7 @@
                 @endforeach
             </ul>
         </div>
+
+        @include('partials.category_cards')
     @endif
 </aside>

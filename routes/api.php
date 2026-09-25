@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\Admin\DashboardController as AdminDashboardControll
 use App\Http\Controllers\Api\Admin\LabelController as AdminLabelController;
 use App\Http\Controllers\Api\Admin\QuestionController as AdminQuestionController;
 use App\Http\Controllers\Api\Admin\SettingsController as AdminSettingsController;
+use App\Http\Controllers\Api\Admin\SliderController as AdminSliderController;
 use App\Http\Controllers\Api\Admin\SubCategoryController as AdminSubCategoryController;
 use App\Http\Controllers\Api\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Api\ArticleController;
@@ -99,6 +100,14 @@ Route::prefix('v1/admin')->group(function () {
             Route::post('sub-categories', [AdminSubCategoryController::class, 'store']);
             Route::post('sub-categories/{id}', [AdminSubCategoryController::class, 'update'])->whereNumber('id');
             Route::delete('sub-categories/{id}', [AdminSubCategoryController::class, 'destroy'])->whereNumber('id');
+
+            // Slider / sorotan beranda (tbl_pilihan posisi "top")
+            Route::get('slider', [AdminSliderController::class, 'index']);
+            Route::get('slider/articles', [AdminSliderController::class, 'articles']);
+            Route::post('slider/urutan', [AdminSliderController::class, 'urutan']);
+            Route::post('slider', [AdminSliderController::class, 'store']);
+            Route::post('slider/{id}', [AdminSliderController::class, 'update'])->whereNumber('id');
+            Route::delete('slider/{id}', [AdminSliderController::class, 'destroy'])->whereNumber('id');
 
             Route::get('labels', [AdminLabelController::class, 'index']);
             Route::post('labels', [AdminLabelController::class, 'store']);

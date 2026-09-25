@@ -55,7 +55,7 @@ class FrontService
 
     public function categories(): array
     {
-        return Category::orderBy('category_id')
+        return Category::orderBy('urutan')->orderBy('category_id')
             ->get()
             ->map(function ($c) {
                 $c = $c->toArray();

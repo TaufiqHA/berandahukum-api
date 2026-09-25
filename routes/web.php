@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\QuotesController;
 use App\Http\Controllers\Admin\SettingemailController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\SettingscategoryController;
+use App\Http\Controllers\Admin\SliderController;
 use App\Http\Controllers\Admin\SosialmediaController;
 use App\Http\Controllers\Admin\SubCategoryController;
 use App\Http\Controllers\Admin\UserController;
@@ -171,6 +172,16 @@ Route::prefix('admin')->middleware('auth')->group(function () {
         Route::get('pilihan/delete/{id}', [PilihanController::class, 'destroy']);
         Route::post('pilihan/getartikel', [PilihanController::class, 'getartikel']);
         Route::post('pilihan/getsub', [PilihanController::class, 'getsub']);
+
+        // Slider / sorotan beranda (tbl_pilihan posisi "top")
+        Route::get('slider', [SliderController::class, 'index']);
+        Route::get('slider/add', [SliderController::class, 'create']);
+        Route::post('slider/add', [SliderController::class, 'store']);
+        Route::get('slider/edit/{id}', [SliderController::class, 'edit']);
+        Route::post('slider/edit/{id}', [SliderController::class, 'update']);
+        Route::get('slider/delete/{id}', [SliderController::class, 'destroy']);
+        Route::post('slider/urutan', [SliderController::class, 'urutan']);
+        Route::get('slider/articles', [SliderController::class, 'articles']);
 
         Route::get('ads', [AdsController::class, 'index']);
         Route::get('ads/add', [AdsController::class, 'create']);

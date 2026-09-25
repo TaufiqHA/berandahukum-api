@@ -9,11 +9,11 @@
                             <img src="{{ article_image($a['article_img'] ?? null) }}" alt="{{ $a['article_title'] }}" @if (! $loop->first) loading="lazy" @endif>
                         </span>
                         <span class="slide__body">
-                            <span class="kicker">Sorotan</span>
+                            <span class="kicker slide__label">Sorotan</span>
                             <h2>{{ $a['article_title'] }}</h2>
-                            <span class="story__meta">
-                                <time>{{ format_tanggal($a['article_date'] ?? '', 'in') }}</time>
-                                @if (!empty($a['article_author']))<span>&middot;</span><span>{{ $a['article_author'] }}</span>@endif
+                            <span class="story__meta slide__meta">
+                                <time class="slide__date">{{ format_tanggal($a['article_date'] ?? '', 'in') }}</time>
+                                @if (!empty($a['article_author']))<span class="slide__sep">&middot;</span><span class="slide__author">{{ $a['article_author'] }}</span>@endif
                             </span>
                         </span>
                     </a>

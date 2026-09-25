@@ -19,7 +19,7 @@
     <meta name="twitter:site" content="@berandahukum" />
     <link rel="icon" type="image/png" href="{{ base_url('favicon.png?v=0.0.1') }}" />
     <link rel="stylesheet" href="{{ base_url('assets/font-awesome/css/font-awesome.min.css') }}">
-    <link rel="stylesheet" href="{{ url("css/site.css?v=11") }}">
+    <link rel="stylesheet" href="{{ url("css/site.css?v=15") }}">
 </head>
 <body>
     <a class="skip-link" href="#content">Lewati ke konten</a>

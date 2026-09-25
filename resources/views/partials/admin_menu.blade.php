@@ -41,6 +41,7 @@
                 <div class="admin-nav__label">Setting</div>
                 <a href="{{ site_admin('popup') }}" class="{{ $is('popup') ? 'is-active' : '' }}"><i class="fa fa-window-restore"></i> Iklan PopUp</a>
                 <a href="{{ site_admin('menu') }}" class="{{ $is('menu') ? 'is-active' : '' }}"><i class="fa fa-bars"></i> Menu</a>
+                <a href="{{ site_admin('slider') }}" class="{{ $is('slider') ? 'is-active' : '' }}"><i class="fa fa-play-circle"></i> Slider (Sorotan)</a>
                 <a href="{{ site_admin('pilihan') }}" class="{{ $is('pilihan') ? 'is-active' : '' }}"><i class="fa fa-star-o"></i> Artikel Pilihan</a>
                 <a href="{{ site_admin('settingscategory') }}" class="{{ $is('settingscategory') ? 'is-active' : '' }}"><i class="fa fa-sort-numeric-asc"></i> Urutan Kategori</a>
                 <a href="{{ site_admin('settings') }}" class="{{ $is('settings') ? 'is-active' : '' }}"><i class="fa fa-info-circle"></i> Informasi</a>

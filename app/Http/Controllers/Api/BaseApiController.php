@@ -112,4 +112,33 @@ abstract class BaseApiController extends Controller
     {
         return $id ? ['id' => (int) $id, 'name' => $name, 'uri' => $uri] : null;
     }
+
+    /**
+     * Ringkasan iklan gambar untuk mobile. Hanya iklan bertipe gambar
+     * (ads_type=0 & ads_file_type=0) yang bisa dirender di aplikasi; skrip/embed
+     * diabaikan. URL gambar relatif terhadap host (uploads/i/...).
+     */
+    protected function adImage(?object $ad): ?array
+    {
+        if (! $ad || empty($ad->ads_url)) {
+            return null;
+        }
+
+        $file = (string) $ad->ads_url;
+        if (! str_starts_with($file, 'http') && ! is_file(public_path('uploads/i/'.$file))) {
+            return null;
+        }
+
+        $link = trim((string) ($ad->ads_link ?? ''));
+        if ($link === '' || str_starts_with($link, '#')) {
+            $link = null;
+        } elseif (! str_starts_with($link, 'http')) {
+            $link = 'http://'.$link;
+        }
+
+        return [
+            'image' => str_starts_with($file, 'http') ? $file : 'uploads/i/'.$file,
+            'link' => $link,
+        ];
+    }
 }
