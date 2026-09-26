@@ -69,7 +69,7 @@ class FrontService
     public function subCategories(int $categoryId): array
     {
         return SubCategory::where('category_id', $categoryId)
-            ->orderBy('sub_category_id')->get()->toArray();
+            ->orderBy('urutan')->orderBy('sub_category_id')->get()->toArray();
     }
 
     public function articlesByCategory(int $categoryId): array
@@ -89,6 +89,7 @@ class FrontService
             ->where('ac.category_id', $categoryId)
             ->where('ac.sub_category_id', $subCategoryId)
             ->where('tbl_article.article_status', '1')
+            ->orderBy('ac.urutan')
             ->orderBy('tbl_article.article_id')
             ->get()->toArray();
     }

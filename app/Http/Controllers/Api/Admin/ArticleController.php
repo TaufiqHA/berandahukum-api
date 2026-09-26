@@ -47,7 +47,7 @@ class ArticleController extends AdminApiController
                 'id' => (int) $c->category_id,
                 'name' => $c->category_name,
                 'uri' => $c->category_uri,
-                'subs' => SubCategory::where('category_id', $c->category_id)->orderBy('sub_category_id')->get()
+                'subs' => SubCategory::where('category_id', $c->category_id)->orderBy('urutan')->orderBy('sub_category_id')->get()
                     ->map(fn ($s) => ['id' => (int) $s->sub_category_id, 'name' => $s->sub_category_name, 'uri' => $s->sub_category_uri])->all(),
             ])->all(),
         ]);
@@ -236,14 +236,29 @@ class ArticleController extends AdminApiController
 
     private function syncCategory(Article $article, Request $request): void
     {
+        $existing = DB::table('tbl_article_category')->where('article_id', $article->article_id)->first();
+
         DB::table('tbl_article_category')->where('article_id', $article->article_id)->delete();
 
         $categoryId = (int) $request->input('category_id', 0);
         if ($categoryId > 0) {
+            $subCategoryId = (int) $request->input('sub_category_id', 0);
+
+            // Pertahankan urutan bila sub-kategori tidak berubah; jika pindah
+            // sub-kategori, letakkan di akhir daftar sub-kategori tersebut.
+            $urutan = 0;
+            if ($subCategoryId > 0) {
+                $sameSub = $existing && (int) $existing->sub_category_id === $subCategoryId;
+                $urutan = $sameSub
+                    ? (int) ($existing->urutan ?? 0)
+                    : ((int) DB::table('tbl_article_category')->where('sub_category_id', $subCategoryId)->max('urutan')) + 1;
+            }
+
             DB::table('tbl_article_category')->insert([
                 'article_id' => $article->article_id,
                 'category_id' => $categoryId,
-                'sub_category_id' => (int) $request->input('sub_category_id', 0),
+                'sub_category_id' => $subCategoryId,
+                'urutan' => $urutan,
                 'created_date' => now(),
             ]);
         }

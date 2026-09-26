@@ -36,7 +36,7 @@ class ArticleController extends Controller
             'row' => null,
             'labels' => Label::orderBy('label_id')->get(),
             'categories' => Category::orderBy('urutan')->get(),
-            'subCategories' => SubCategory::orderBy('sub_category_id')->get(),
+            'subCategories' => SubCategory::orderBy('urutan')->orderBy('sub_category_id')->get(),
             'selectedCategory' => null,
             'selectedSub' => null,
         ]);
@@ -52,7 +52,7 @@ class ArticleController extends Controller
             'row' => $row,
             'labels' => Label::orderBy('label_id')->get(),
             'categories' => Category::orderBy('urutan')->get(),
-            'subCategories' => SubCategory::orderBy('sub_category_id')->get(),
+            'subCategories' => SubCategory::orderBy('urutan')->orderBy('sub_category_id')->get(),
             'selectedCategory' => $junction->category_id ?? null,
             'selectedSub' => $junction->sub_category_id ?? null,
         ]);
@@ -222,13 +222,28 @@ class ArticleController extends Controller
 
     private function syncCategory(Article $article, Request $request): void
     {
+        $existing = ArticleCategory::where('article_id', $article->article_id)->first();
+
         ArticleCategory::where('article_id', $article->article_id)->delete();
 
         if ($request->filled('categoryId')) {
+            $subCategoryId = (int) $request->input('subCategoryId', 0);
+
+            // Pertahankan urutan bila sub-kategori tidak berubah; jika pindah,
+            // letakkan di akhir daftar sub-kategori tersebut.
+            $urutan = 0;
+            if ($subCategoryId > 0) {
+                $sameSub = $existing && (int) $existing->sub_category_id === $subCategoryId;
+                $urutan = $sameSub
+                    ? (int) ($existing->urutan ?? 0)
+                    : ((int) ArticleCategory::where('sub_category_id', $subCategoryId)->max('urutan')) + 1;
+            }
+
             ArticleCategory::create([
                 'article_id' => $article->article_id,
                 'category_id' => (int) $request->input('categoryId'),
-                'sub_category_id' => (int) $request->input('subCategoryId', 0),
+                'sub_category_id' => $subCategoryId,
+                'urutan' => $urutan,
             ]);
         }
     }

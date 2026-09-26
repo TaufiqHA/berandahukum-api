@@ -24,7 +24,7 @@ class CategoryController extends AdminApiController
 
     public function store(Request $request)
     {
-        $data = $this->payload($request);
+        $data = $this->payload($request, true);
         Category::create($data);
 
         return $this->message('Kategori berhasil disimpan.', 201);
@@ -44,16 +44,51 @@ class CategoryController extends AdminApiController
         return $this->message('Kategori berhasil dihapus.');
     }
 
-    private function payload(Request $request): array
+    /** Simpan urutan hasil geser. Body: { position: [id, id, ...] } */
+    public function urutan(Request $request)
+    {
+        $position = array_values(array_map('intval', (array) $request->input('position', [])));
+
+        foreach ($position as $i => $id) {
+            Category::where('category_id', $id)->update(['urutan' => $i + 1]);
+        }
+
+        // Kategori yang tidak disertakan diletakkan setelahnya, agar urutan
+        // lama (0) tidak menyerobot posisi teratas.
+        $offset = count($position);
+        Category::whereNotIn('category_id', $position)
+            ->orderBy('urutan')->orderBy('category_id')
+            ->pluck('category_id')
+            ->each(fn ($id, $k) => Category::where('category_id', $id)->update(['urutan' => $offset + $k + 1]));
+
+        return $this->message('Urutan kategori disimpan.');
+    }
+
+    private function payload(Request $request, bool $isNew = false): array
     {
         $request->validate(['name' => 'required|string|max:70']);
         $name = $request->input('name');
 
-        return [
+        $data = [
             'category_uri' => urlencode(str_replace(' ', '-', strtolower($name))),
             'category_name' => $name,
             'category_show' => $request->boolean('show') ? 'yes' : 'no',
-            'urutan' => (int) $request->input('urutan', 0),
         ];
+
+        // Saat menambah: urutan kosong/0 berarti otomatis diletakkan di akhir.
+        // Saat mengubah: hanya perbarui urutan bila memang dikirim, supaya
+        // menyunting nama tidak mengacak urutan hasil geser.
+        if ($isNew) {
+            $data['urutan'] = (int) ($request->input('urutan') ?: $this->nextUrutan());
+        } elseif ($request->has('urutan')) {
+            $data['urutan'] = (int) $request->input('urutan');
+        }
+
+        return $data;
+    }
+
+    private function nextUrutan(): int
+    {
+        return ((int) Category::max('urutan')) + 1;
     }
 }

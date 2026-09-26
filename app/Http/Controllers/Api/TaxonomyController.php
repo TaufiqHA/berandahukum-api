@@ -18,7 +18,7 @@ class TaxonomyController extends BaseApiController
             'name' => $c->category_name,
             'uri' => $c->category_uri,
             'subs' => SubCategory::where('category_id', $c->category_id)->where('sub_category_show', 'yes')
-                ->orderBy('sub_category_id')->get()->map(fn ($s) => [
+                ->orderBy('urutan')->orderBy('sub_category_id')->get()->map(fn ($s) => [
                     'id' => (int) $s->sub_category_id,
                     'name' => $s->sub_category_name,
                     'uri' => $s->sub_category_uri,
@@ -52,9 +52,12 @@ class TaxonomyController extends BaseApiController
             return response()->json(['message' => 'Sub kategori tidak ditemukan'], 404);
         }
 
-        $paginator = Article::where('article_status', 1)
-            ->whereIn('article_id', ArticleCategory::where('sub_category_id', $sub->sub_category_id)->pluck('article_id'))
-            ->orderByDesc('article_date')
+        $paginator = Article::select('tbl_article.*')
+            ->join('tbl_article_category as ac', 'ac.article_id', '=', 'tbl_article.article_id')
+            ->where('ac.sub_category_id', $sub->sub_category_id)
+            ->where('tbl_article.article_status', 1)
+            ->orderBy('ac.urutan')
+            ->orderByDesc('tbl_article.article_date')
             ->paginate((int) $request->input('per_page', 12))
             ->through(fn ($a) => $this->articleSummary($a->toArray()));
 

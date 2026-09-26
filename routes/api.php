@@ -94,11 +94,15 @@ Route::prefix('v1/admin')->group(function () {
             Route::delete('questions/{id}', [AdminQuestionController::class, 'destroy'])->whereNumber('id');
 
             Route::get('categories', [AdminCategoryController::class, 'index']);
+            Route::post('categories/urutan', [AdminCategoryController::class, 'urutan']);
             Route::post('categories', [AdminCategoryController::class, 'store']);
             Route::post('categories/{id}', [AdminCategoryController::class, 'update'])->whereNumber('id');
             Route::delete('categories/{id}', [AdminCategoryController::class, 'destroy'])->whereNumber('id');
 
             Route::get('sub-categories', [AdminSubCategoryController::class, 'index']);
+            Route::post('sub-categories/urutan', [AdminSubCategoryController::class, 'urutan']);
+            Route::get('sub-categories/{id}/articles', [AdminSubCategoryController::class, 'articles'])->whereNumber('id');
+            Route::post('sub-categories/{id}/articles/urutan', [AdminSubCategoryController::class, 'articlesUrutan'])->whereNumber('id');
             Route::post('sub-categories', [AdminSubCategoryController::class, 'store']);
             Route::post('sub-categories/{id}', [AdminSubCategoryController::class, 'update'])->whereNumber('id');
             Route::delete('sub-categories/{id}', [AdminSubCategoryController::class, 'destroy'])->whereNumber('id');

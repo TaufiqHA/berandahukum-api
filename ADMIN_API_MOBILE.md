@@ -66,6 +66,41 @@ Mengatur artikel yang tampil pada slider beranda (`tbl_pilihan`, `posisi = "top"
 | DELETE | `slider/{id}` | Hapus dari slider |
 | POST | `slider/urutan` | Simpan urutan: `{position:[id,id,…]}` |
 
+### Urutan kategori
+
+Mengatur urutan kartu kategori (accordion) di beranda. Nilai disimpan di kolom
+`urutan` `tbl_category`; API publik mengurutkan kategori berdasarkan kolom ini:
+
+| Metode | Endpoint | Keterangan |
+|--------|----------|------------|
+| GET | `categories` | Daftar kategori → `{data:[{id,name,uri,show,urutan,sub_count}]}` |
+| POST | `categories` | Tambah: `{name, show, urutan?}` (urutan kosong/0 → otomatis di akhir) |
+| POST | `categories/{id}` | Ubah identitas kategori; `urutan` hanya diubah bila dikirim |
+| DELETE | `categories/{id}` | Hapus kategori |
+| POST | `categories/urutan` | Simpan urutan hasil geser: `{position:[id,id,…]}` |
+
+### Urutan sub-kategori & artikel
+
+Mengatur urutan sub-kategori di dalam sebuah kategori (kolom `urutan`
+`tbl_sub_category`) dan urutan artikel di dalam sebuah sub-kategori (kolom
+`urutan` `tbl_article_category`). Kedua listing publik mengikuti urutan ini:
+
+| Metode | Endpoint | Keterangan |
+|--------|----------|------------|
+| GET | `sub-categories` | Daftar sub-kategori → `{data:[{id,category_id,category_name,name,uri,show,urutan}]}` |
+| POST | `sub-categories` | Tambah: `{category_id, name, show, urutan?}` (urutan kosong/0 → otomatis di akhir) |
+| POST | `sub-categories/{id}` | Ubah; `urutan` hanya diubah bila dikirim |
+| DELETE | `sub-categories/{id}` | Hapus sub-kategori |
+| POST | `sub-categories/urutan` | Simpan urutan sub-kategori: `{position:[id,id,…]}` |
+| GET | `sub-categories/{id}/articles` | Artikel terbit pada sub-kategori → `{data:[{id,title,date,urutan}]}` |
+| POST | `sub-categories/{id}/articles/urutan` | Simpan urutan artikel: `{position:[article_id,…]}` |
+
+Artikel baru (atau yang dipindah sub-kategori) otomatis diletakkan di akhir;
+menyunting artikel tanpa mengubah sub-kategori tidak mengubah urutannya.
+
+Catatan: `urutan` sub-kategori bersifat global (lintas kategori), tetapi
+pengurutan selalu difilter per kategori sehingga urutan relatif tetap benar.
+
 ### Tata letak beranda
 
 Mengatur urutan + tampil/sembunyikan section beranda (sama seperti menu
@@ -113,5 +148,8 @@ mengembalikan komponen yang sama dengan situs mobile:
 Catatan: hanya **iklan gambar** (`ads_type=0` & `ads_file_type=0`) yang
 dikirim; skrip/embed diabaikan. URL gambar relatif (`uploads/i/...`).
 `categories` kini hanya berisi kategori `category_show=yes` dengan
-sub-kategori `sub_category_show=yes`, diurutkan kolom `urutan`.
+sub-kategori `sub_category_show=yes`, diurutkan kolom `urutan`. Sub-kategori
+(`categories[].subs`) juga diurutkan kolom `urutan`, sedangkan daftar artikel
+pada `GET /api/v1/subcategories/{uri}` diurutkan kolom `urutan`
+`tbl_article_category` lalu tanggal artikel.
 

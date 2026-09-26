@@ -13,7 +13,7 @@ class SubCategoryController extends Controller
     {
         return view('admin.sub_category.index', [
             'title' => 'Daftar Sub Kategori',
-            'subCategory' => SubCategory::orderBy('sub_category_id')->get(),
+            'subCategory' => SubCategory::orderBy('urutan')->orderBy('sub_category_id')->get(),
             'categories' => Category::orderBy('urutan')->get()->keyBy('category_id'),
         ]);
     }
@@ -38,7 +38,10 @@ class SubCategoryController extends Controller
 
     public function store(Request $request)
     {
-        SubCategory::create($this->payload($request));
+        $data = $this->payload($request);
+        // Sub-kategori baru diletakkan di akhir daftar.
+        $data['urutan'] = ((int) SubCategory::max('urutan')) + 1;
+        SubCategory::create($data);
 
         return redirect(site_admin('sub-category'))->with('msg_flash', success_message('Data berhasil disimpan.'));
     }
