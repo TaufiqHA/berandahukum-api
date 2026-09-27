@@ -120,40 +120,6 @@
                 @endif
                 @break
 
-            @case('headline')
-                @if (!empty($tmpHeadLine))
-                    <section class="band home-extra">
-                        <div class="wrap">
-                            <div class="section__head">
-                                <span class="section__no">02</span>
-                                <h2 class="section__title">Headline</h2>
-                                <span class="section__rule"></span>
-                            </div>
-                            <div class="grid grid--3">
-                                @foreach ($tmpHeadLine as $h)
-                                    <article class="story">
-                                        <a class="story__media" href="{{ site_url('a/'.$h['article_uri']) }}">
-                                            <img src="{{ article_image($h['article_img'] ?? null) }}" alt="{{ $h['article_title'] }}" loading="lazy">
-                                        </a>
-                                        <div class="story__body">
-                                            <h3 class="story__title"><a href="{{ site_url('a/'.$h['article_uri']) }}">{{ $h['article_title'] }}</a></h3>
-                                            <p class="story__meta">
-                                                <time>{{ format_tanggal($h['article_date'] ?? '', 'ins') }}</time>
-                                                @if (!empty($h['article_author']))<span>&middot;</span><span>{{ $h['article_author'] }}</span>@endif
-                                            </p>
-                                        </div>
-                                    </article>
-                                @endforeach
-                            </div>
-                            <div class="grid grid--2" style="margin-top:var(--s6);">
-                                @include('partials.ad', ['ad' => $frontService->getArticleById(3)])
-                                @include('partials.ad', ['ad' => $frontService->getArticleById(4)])
-                            </div>
-                        </div>
-                    </section>
-                @endif
-                @break
-
             @case('pilihan_editor')
                 @if (!empty($article_pilihanatas) || !empty($article_pilihanbawah))
                     <section class="band band--soft home-extra">

@@ -29,7 +29,6 @@ class HomeLayout
             'terbaru' => ['label' => 'Terbaru', 'scope' => 'desktop'],
             'tiles' => ['label' => 'Tile Banner / Buku & Layanan', 'scope' => 'both'],
             'categories' => ['label' => 'Kartu Kategori', 'scope' => 'both'],
-            'headline' => ['label' => 'Headline', 'scope' => 'desktop'],
             'pilihan_editor' => ['label' => 'Pilihan Editor', 'scope' => 'desktop'],
             'label' => ['label' => 'Section Label', 'scope' => 'desktop'],
             'most_read' => ['label' => 'Paling Banyak Dibaca/Dikomentari', 'scope' => 'desktop'],

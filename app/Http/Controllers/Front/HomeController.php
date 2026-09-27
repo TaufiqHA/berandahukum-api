@@ -24,8 +24,6 @@ class HomeController extends Controller
                 ->orderByDesc('article_date')
                 ->orderByDesc('article_id')
                 ->limit(9)->get()->toArray(),
-            'tmpHeadLine' => Article::where('article_status', 1)
-                ->where('headline_news', 1)->orderByDesc('article_date')->limit(5)->get()->toArray(),
             'banner_home' => Banner::where('status', 'yes')->orderBy('urutan')->get()->toArray(),
             'article_pilihanatas' => $this->front->articlePilihan('atas'),
             'article_pilihanbawah' => $this->front->articlePilihan('bawah'),
