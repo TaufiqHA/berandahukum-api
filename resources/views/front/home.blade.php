@@ -156,10 +156,10 @@
 
             @case('pilihan_editor')
                 @if (!empty($article_pilihanatas) || !empty($article_pilihanbawah))
-                    <section class="band band--tint home-extra">
+                    <section class="band band--soft home-extra">
                         <div class="wrap">
                             <div class="section__head">
-                                <span class="section__no">03</span>
+                                <span class="section__no">02</span>
                                 <h2 class="section__title">Pilihan Editor</h2>
                                 <span class="section__rule"></span>
                             </div>

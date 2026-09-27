@@ -103,6 +103,7 @@ p { margin: 0 0 1em; text-wrap: pretty; }
 /* ============ Band / section ============ */
 .band { padding: var(--s7) 0; }
 .band--tint { background: var(--n-50); }
+.band--soft { background: var(--n-100); }
 .band--dark { background: var(--n-900); color: var(--n-100); }
 .band--dark h2, .band--dark h3, .band--dark a { color: var(--n-0); }
 
