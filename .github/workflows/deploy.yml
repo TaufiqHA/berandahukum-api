@@ -26,13 +26,14 @@ jobs:
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
-          server: ${{ secrets.FTP_HOST }}
-          username: ${{ secrets.FTP_USER }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftps
+          server: ${{ secrets.SFTP_HOST }}
+          username: ${{ secrets.SFTP_USER }}
+          password: ${{ secrets.SFTP_PASSWORD }}
           port: 21
-          local-dir: ./
-          server-dir: /public_html/
+          local_path: ./
+          remote_path: /public_html/
+          sftp_only: true
+          delete_remote_files: false
           exclude: |
             **/.git*
             **/.git*/**
