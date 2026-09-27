@@ -20,9 +20,6 @@ jobs:
           extensions: mbstring, bcmath, intl, pdo_mysql
           tools: composer
 
-      - name: Install Composer dependencies
-        run: composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction
-
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
