@@ -24,7 +24,7 @@
 
             @case('slider')
                 <div class="wrap home__hero">
-                    @include('partials.slider_atas', ['art_pilihan_top' => $art_pilihan_top ?? []])
+                    @include('partials.slider_atas', ['art_headline' => $art_headline ?? []])
                 </div>
                 @break
 

@@ -1,5 +1,5 @@
-@if (!empty($art_pilihan_top))
-    @php $slides = array_values($art_pilihan_top); $total = count($slides); @endphp
+@if (!empty($art_headline))
+    @php $slides = array_values($art_headline); $total = count($slides); @endphp
     <section class="slider" id="heroSlider" role="region" aria-roledescription="carousel" aria-label="Sorotan">
         <div class="slider__viewport">
             <div class="slider__track">

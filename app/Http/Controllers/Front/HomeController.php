@@ -27,7 +27,7 @@ class HomeController extends Controller
             'banner_home' => Banner::where('status', 'yes')->orderBy('urutan')->get()->toArray(),
             'article_pilihanatas' => $this->front->articlePilihan('atas'),
             'article_pilihanbawah' => $this->front->articlePilihan('bawah'),
-            'art_pilihan_top' => $this->front->articlePilihan('top'),
+            'art_headline' => $this->front->headline(),
         ];
 
         return view('front.home', $data);

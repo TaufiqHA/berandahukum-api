@@ -188,6 +188,17 @@ class FrontService
             ->get()->toArray();
     }
 
+    /** Artikel yang ditandai Headline — dipakai slider/sorotan beranda. */
+    public function headline(int $limit = 6): array
+    {
+        return Article::where('article_status', '1')
+            ->where('headline_news', 1)
+            ->orderByDesc('article_date')
+            ->orderByDesc('article_id')
+            ->limit($limit)
+            ->get()->toArray();
+    }
+
     public function quotes(): array
     {
         return Quote::where('quote_status', '1')->orderBy('urutan')->get()->toArray();
