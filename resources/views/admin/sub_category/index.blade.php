@@ -4,7 +4,10 @@
 <div class="container">
     <div class="d-flex justify-content-between mb-3">
         <h4>{{ $title }}</h4>
-        <a href="{{ site_admin('sub-category/add') }}" class="btn btn-primary btn-sm">Tambah</a>
+        <div>
+            <a href="{{ site_admin('sub-category/urutan') }}" class="btn btn-outline-primary btn-sm">Urut Sub Kategori</a>
+            <a href="{{ site_admin('sub-category/add') }}" class="btn btn-primary btn-sm">Tambah</a>
+        </div>
     </div>
     <div class="table-responsive">
     <table class="table table-sm table-bordered table-striped">

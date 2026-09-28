@@ -33,7 +33,7 @@
                 <div class="admin-nav__label">Data Master</div>
                 <a href="{{ site_admin('label') }}" class="{{ $is('label') ? 'is-active' : '' }}"><i class="fa fa-tags"></i> Label</a>
                 <a href="{{ site_admin('category') }}" class="{{ $is('category') ? 'is-active' : '' }}"><i class="fa fa-folder-o"></i> Kategori</a>
-                <a href="{{ site_admin('sub-category') }}" class="{{ $is('sub-category') ? 'is-active' : '' }}"><i class="fa fa-folder-open-o"></i> Sub Kategori</a>
+                <a href="{{ site_admin('sub-category') }}" class="{{ $is('sub-category') && !request()->is('admin/sub-category/urutan') && !request()->is('admin/sub-category/articles/*') ? 'is-active' : '' }}"><i class="fa fa-folder-open-o"></i> Sub Kategori</a>
                 <a href="{{ site_admin('user') }}" class="{{ $is('user') ? 'is-active' : '' }}"><i class="fa fa-users"></i> Pengguna</a>
             </div>
 
@@ -44,6 +44,7 @@
                 <a href="{{ site_admin('slider') }}" class="{{ $is('slider') ? 'is-active' : '' }}"><i class="fa fa-play-circle"></i> Slider (Sorotan)</a>
                 <a href="{{ site_admin('pilihan') }}" class="{{ $is('pilihan') ? 'is-active' : '' }}"><i class="fa fa-star-o"></i> Artikel Pilihan</a>
                 <a href="{{ site_admin('settingscategory') }}" class="{{ $is('settingscategory') ? 'is-active' : '' }}"><i class="fa fa-sort-numeric-asc"></i> Urutan Kategori</a>
+                <a href="{{ site_admin('sub-category/urutan') }}" class="{{ request()->is('admin/sub-category/urutan') ? 'is-active' : '' }}"><i class="fa fa-sort-amount-asc"></i> Urutan Sub Kategori</a>
                 <a href="{{ site_admin('layout') }}" class="{{ $is('layout') ? 'is-active' : '' }}"><i class="fa fa-th-large"></i> Tata Letak Beranda</a>
                 <a href="{{ site_admin('settings') }}" class="{{ $is('settings') ? 'is-active' : '' }}"><i class="fa fa-info-circle"></i> Informasi</a>
                 <a href="{{ site_admin('sosialmedia') }}" class="{{ $is('sosialmedia') ? 'is-active' : '' }}"><i class="fa fa-share-alt"></i> Sosial Media</a>

@@ -4,21 +4,19 @@ namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\Controller;
 use App\Models\Article;
-use App\Models\ArticleCategory;
 use App\Models\Category;
 use App\Models\Comment;
 use App\Models\Label;
 use App\Models\Referensi;
 use App\Models\SubCategory;
+use App\Models\User;
 use App\Services\FrontService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class ArticleController extends Controller
 {
-    public function __construct(private FrontService $front)
-    {
-    }
+    public function __construct(private FrontService $front) {}
 
     public function detail(string $uri)
     {
@@ -30,7 +28,7 @@ class ArticleController extends Controller
         }
 
         $a = $article->toArray();
-        $authorName = optional(\App\Models\User::find($a['article_created_by']))->user_name ?? 'Admin';
+        $authorName = optional(User::find($a['article_created_by']))->user_name ?? 'Admin';
 
         $referensi = Referensi::where('article_ref', $a['article_id'])
             ->orderBy('urutan')->get()->map(function ($r) {
@@ -97,7 +95,8 @@ class ArticleController extends Controller
             ->join('tbl_article_category as ac', 'ac.article_id', '=', 'tbl_article.article_id')
             ->where('ac.sub_category_id', $sub->sub_category_id)
             ->where('tbl_article.article_status', '1')
-            ->orderByDesc('tbl_article.create_date')
+            ->orderBy('ac.urutan')
+            ->orderByDesc('tbl_article.article_date')
             ->paginate(10);
 
         return view('front.list', [

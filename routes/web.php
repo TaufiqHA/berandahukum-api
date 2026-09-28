@@ -16,8 +16,8 @@ use App\Http\Controllers\Admin\PilihanController;
 use App\Http\Controllers\Admin\PopupController;
 use App\Http\Controllers\Admin\QuotesController;
 use App\Http\Controllers\Admin\SettingemailController;
-use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\SettingscategoryController;
+use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\SliderController;
 use App\Http\Controllers\Admin\SosialmediaController;
 use App\Http\Controllers\Admin\SubCategoryController;
@@ -124,6 +124,12 @@ Route::prefix('admin')->middleware('auth')->group(function () {
         Route::get('sub-category/edit/{id}', [SubCategoryController::class, 'edit']);
         Route::post('sub-category/edit/{id}', [SubCategoryController::class, 'update']);
         Route::get('sub-category/delete/{id}', [SubCategoryController::class, 'destroy']);
+
+        // Pengaturan urutan sub-kategori (per kategori) & artikel (per sub-kategori)
+        Route::get('sub-category/urutan', [SubCategoryController::class, 'urutan']);
+        Route::post('sub-category/urutan', [SubCategoryController::class, 'urutanSave']);
+        Route::get('sub-category/articles/{id}', [SubCategoryController::class, 'articles'])->whereNumber('id');
+        Route::post('sub-category/articles/{id}', [SubCategoryController::class, 'articlesSave'])->whereNumber('id');
 
         Route::get('user', [UserController::class, 'index']);
         Route::get('user/add', [UserController::class, 'create']);

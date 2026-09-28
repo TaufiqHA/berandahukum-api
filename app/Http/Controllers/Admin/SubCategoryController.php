@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Article;
+use App\Models\ArticleCategory;
 use App\Models\Category;
 use App\Models\SubCategory;
 use Illuminate\Http\Request;
@@ -58,6 +60,96 @@ class SubCategoryController extends Controller
         SubCategory::findOrFail($id)->delete();
 
         return redirect(site_admin('sub-category'))->with('msg_flash', success_message('Kategori berhasil dihapus.'));
+    }
+
+    /**
+     * Halaman pengaturan urutan sub-kategori, dikelompokkan per kategori
+     * (padanan layar "Urutan Sub Kategori" pada panel mobile).
+     */
+    public function urutan()
+    {
+        return view('admin.sub_category.urutan', [
+            'title' => 'Seting Urutan Sub Kategori',
+            'categories' => Category::orderBy('urutan')->orderBy('category_id')->get(),
+            'subCategories' => SubCategory::orderBy('urutan')->orderBy('sub_category_id')
+                ->get()->groupBy('category_id'),
+            'show_ui' => true,
+        ]);
+    }
+
+    /**
+     * Simpan urutan sub-kategori dalam satu kategori.
+     * Body: { category_id, position: [id, id, ...] }
+     */
+    public function urutanSave(Request $request)
+    {
+        $categoryId = (int) $request->input('category_id');
+        $position = array_values(array_map('intval', (array) $request->input('position', [])));
+
+        foreach ($position as $i => $id) {
+            SubCategory::where('category_id', $categoryId)
+                ->where('sub_category_id', $id)
+                ->update(['urutan' => $i + 1]);
+        }
+
+        return redirect(site_admin('sub-category/urutan'))
+            ->with('msg_flash', success_message('Urutan sub kategori berhasil disimpan.'));
+    }
+
+    /** Artikel terbit pada sebuah sub-kategori, untuk pengaturan urutan. */
+    public function articles($id)
+    {
+        $sub = SubCategory::findOrFail($id);
+
+        $articles = Article::select(
+            'tbl_article.article_id',
+            'tbl_article.article_title',
+            'tbl_article.article_date',
+            'ac.urutan as ac_urutan',
+        )
+            ->join('tbl_article_category as ac', 'ac.article_id', '=', 'tbl_article.article_id')
+            ->where('ac.sub_category_id', $sub->sub_category_id)
+            ->where('tbl_article.article_status', 1)
+            ->orderBy('ac.urutan')
+            ->orderByDesc('tbl_article.article_date')
+            ->get();
+
+        return view('admin.sub_category.articles', [
+            'title' => 'Seting Urutan Artikel',
+            'subCategory' => $sub,
+            'articles' => $articles,
+            'show_ui' => true,
+        ]);
+    }
+
+    /**
+     * Simpan urutan artikel pada sebuah sub-kategori.
+     * Body: { position: [article_id, ...] }
+     */
+    public function articlesSave(Request $request, $id)
+    {
+        $sub = SubCategory::findOrFail($id);
+        $position = array_values(array_map('intval', (array) $request->input('position', [])));
+
+        foreach ($position as $i => $articleId) {
+            ArticleCategory::where('sub_category_id', $sub->sub_category_id)
+                ->where('article_id', $articleId)
+                ->update(['urutan' => $i + 1]);
+        }
+
+        // Sisa artikel pada sub-kategori ini diletakkan setelahnya agar urutan
+        // lama (0) tidak menyerobot posisi teratas.
+        $offset = count($position);
+        ArticleCategory::where('sub_category_id', $sub->sub_category_id)
+            ->whereNotIn('article_id', $position)
+            ->orderBy('urutan')->orderByDesc('created_date')
+            ->pluck('article_id')
+            ->each(fn ($articleId, $k) => ArticleCategory::where('sub_category_id', $sub->sub_category_id)
+                ->where('article_id', $articleId)
+                ->update(['urutan' => $offset + $k + 1]));
+
+        return redirect(site_admin('sub-category/articles/'.$id))
+            ->with('msg_flash', success_message('Urutan artikel berhasil disimpan.'));
     }
 
     private function payload(Request $request): array
