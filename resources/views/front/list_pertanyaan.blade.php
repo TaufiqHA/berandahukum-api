@@ -11,7 +11,7 @@
                     <p style="font-weight:600;margin-bottom:4px;">{{ $p->pertanyaan }}</p>
                     <p class="comment__time">{{ $p->pertanyaan_nama }} &middot; {{ format_tanggal($p->pertanyaan_date, 'in') }}</p>
                     @if (!empty($p->pertanyaan_jawaban))
-                        <div class="comment__reply"><strong>Jawaban:</strong><br>{!! nl2br(e($p->pertanyaan_jawaban)) !!}</div>
+                        <div class="comment__reply"><strong>Jawaban:</strong><br>{!! render_content($p->pertanyaan_jawaban) !!}</div>
                     @endif
                 </div>
             @empty

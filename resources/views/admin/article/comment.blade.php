@@ -11,7 +11,7 @@
             <tr>
                 <td>{{ $loop->iteration }}</td>
                 <td>{{ $r->comment_name }}</td>
-                <td>{!! nl2br(e($r->comment_fill)) !!}@if ($r->comment_reply)<br><b>Jawaban:</b><br>{!! nl2br(e($r->comment_reply)) !!}@endif</td>
+                <td>{!! nl2br(e($r->comment_fill)) !!}@if ($r->comment_reply)<br><b>Jawaban:</b><br>{!! render_content($r->comment_reply) !!}@endif</td>
                 <td>{{ $r->comment_date }}</td>
                 <td>{{ $r->comment_status == 1 ? 'Tampil' : 'Tidak' }}</td>
                 <td>

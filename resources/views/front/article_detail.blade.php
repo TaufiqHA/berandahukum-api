@@ -91,7 +91,7 @@
                             <p><span class="comment__author">{{ $c['comment_name'] }}</span> <span class="comment__time">{{ $c['comment_date'] }}</span></p>
                             <p style="margin:0;">{!! nl2br(e($c['comment_fill'])) !!}</p>
                             @if (!empty($c['comment_reply']))
-                                <div class="comment__reply"><strong>Jawaban:</strong><br>{!! nl2br(e($c['comment_reply'])) !!}</div>
+                                <div class="comment__reply"><strong>Jawaban:</strong><br>{!! render_content($c['comment_reply']) !!}</div>
                             @endif
                         </li>
                     @empty

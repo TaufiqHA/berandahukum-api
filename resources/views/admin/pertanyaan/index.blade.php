@@ -13,7 +13,7 @@
                 <td>{{ $loop->iteration }}</td>
                 <td>{{ $r->pertanyaan_nama }}</td>
                 <td>{{ $r->pertanyaan_email }}</td>
-                <td>{!! nl2br(e($r->pertanyaan)) !!}@if ($r->pertanyaan_jawaban)<br><b>Jawaban:</b><br>{!! nl2br(e($r->pertanyaan_jawaban)) !!}@endif</td>
+                <td>{!! nl2br(e($r->pertanyaan)) !!}@if ($r->pertanyaan_jawaban)<br><b>Jawaban:</b><br>{!! render_content($r->pertanyaan_jawaban) !!}@endif</td>
                 <td>{{ tanggal($r->pertanyaan_date, 'd/m/Y H:i') }}</td>
                 <td>{{ $r->pertanyaan_status == 1 ? 'Dijawab' : 'Belum' }}</td>
                 <td>

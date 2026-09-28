@@ -288,6 +288,11 @@ p { margin: 0 0 1em; text-wrap: pretty; }
 .comment__author { font-weight: 700; color: var(--n-900); }
 .comment__time { display: block; font-size: .74rem; letter-spacing: .04em; text-transform: uppercase; color: var(--n-500); }
 .comment__reply { margin-top: var(--s3); padding-left: var(--s4); border-left: 3px solid var(--brand-soft); }
+.comment__reply > :first-child { margin-top: 0; }
+.comment__reply > :last-child { margin-bottom: 0; }
+.comment__reply p { margin: 0 0 .5em; }
+.comment__reply ul, .comment__reply ol { margin: .25em 0 .5em; padding-left: 1.35rem; list-style-position: outside; }
+.comment__reply li { margin-bottom: .25em; }
 
 /* ============ Pagination ============ */
 .pager { margin-top: var(--s6); }

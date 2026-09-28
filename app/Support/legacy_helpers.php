@@ -120,6 +120,29 @@ if (! function_exists('format_tanggal')) {
     }
 }
 
+if (! function_exists('render_content')) {
+    /**
+     * Tampilkan konten dari admin (jawaban komentar/pertanyaan).
+     *
+     * Konten berupa HTML dirender apa adanya, sedangkan teks biasa
+     * ditampilkan dengan baris baru yang dipertahankan.
+     */
+    function render_content(?string $html): string
+    {
+        $html = (string) $html;
+
+        if ($html === '') {
+            return '';
+        }
+
+        if (strip_tags($html) === $html) {
+            return nl2br(e($html));
+        }
+
+        return $html;
+    }
+}
+
 if (! function_exists('admin_user')) {
     function admin_user()
     {
