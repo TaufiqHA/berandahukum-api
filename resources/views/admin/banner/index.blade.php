@@ -8,17 +8,18 @@
     </div>
     <div class="table-responsive">
         <table class="table table-sm table-bordered table-striped">
-            <thead><tr><th>#</th><th>Nama</th><th>Link</th><th>Gambar</th><th>Urutan</th><th>Status</th><th class="text-right">Aksi</th></tr></thead>
+            <thead><tr><th>#</th><th>Nama</th><th>Tipe</th><th>Link</th><th>Gambar</th><th>Urutan</th><th>Status</th><th class="text-right">Aksi</th></tr></thead>
             <tbody>
             @foreach ($banner as $r)
                 <tr>
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $r->nama_banner }}</td>
+                    <td>{{ [0 => 'Gambar', 1 => 'Iframe', 2 => 'Script / HTML'][(int) ($r->banner_type ?? 0)] ?? 'Gambar' }}</td>
                     <td>{{ $r->link_url }}</td>
                     <td>{{ $r->file_banner }}</td>
                     <td>{{ $r->urutan }}</td>
                     <td>
-                        @if ($r->status == 1)
+                        @if ($r->status === 'yes')
                             <span class="status-badge is-publish">Aktif</span>
                         @else
                             <span class="status-badge is-muted">Nonaktif</span>

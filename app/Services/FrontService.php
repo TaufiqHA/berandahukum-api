@@ -94,6 +94,36 @@ class FrontService
             ->get()->toArray();
     }
 
+    /** Sub-kategori untuk side menu lama (urut create_date desc). */
+    public function sideSubCategories(int $categoryId): array
+    {
+        return SubCategory::where('category_id', $categoryId)
+            ->orderByDesc('create_date')->get()->toArray();
+    }
+
+    /** Artikel per sub-kategori untuk side menu lama (urut create_date desc). */
+    public function sideSubCategoryArticles(int $categoryId, int $subCategoryId): array
+    {
+        return Article::select('tbl_article.article_date', 'tbl_article.article_uri', 'tbl_article.article_title', 'tbl_article.article_content', 'tbl_article.article_created_date')
+            ->join('tbl_article_category as ac', 'ac.article_id', '=', 'tbl_article.article_id')
+            ->where('tbl_article.article_status', '1')
+            ->where('ac.category_id', $categoryId)
+            ->where('ac.sub_category_id', $subCategoryId)
+            ->orderByDesc('tbl_article.create_date')
+            ->get()->toArray();
+    }
+
+    /** Artikel per kategori (tanpa sub-kategori) untuk side menu lama. */
+    public function sideCategoryArticles(int $categoryId): array
+    {
+        return Article::select('tbl_article.article_date', 'tbl_article.article_uri', 'tbl_article.article_title', 'tbl_article.article_content', 'tbl_article.article_created_date')
+            ->join('tbl_article_category as ac', 'ac.article_id', '=', 'tbl_article.article_id')
+            ->where('tbl_article.article_status', '1')
+            ->where('ac.category_id', $categoryId)
+            ->orderByDesc('tbl_article.create_date')
+            ->get()->toArray();
+    }
+
     public function labels(): array
     {
         return Label::where('label_show', 'yes')->orderBy('label_id')->get()

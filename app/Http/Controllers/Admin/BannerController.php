@@ -32,7 +32,8 @@ class BannerController extends Controller
 
     public function update(Request $request, $id)
     {
-        Banner::findOrFail($this->decrypt($id))->update($this->payload($request));
+        $banner = Banner::findOrFail($this->decrypt($id));
+        $banner->update($this->payload($request, $banner));
 
         return redirect(site_admin('banner'))->with('msg_flash', success_message('Data banner berhasil disimpan.'));
     }
@@ -44,11 +45,13 @@ class BannerController extends Controller
         return redirect(site_admin('banner'))->with('msg_flash', success_message('Berhasil dihapus.'));
     }
 
-    private function payload(Request $request): array
+    private function payload(Request $request, ?Banner $existing = null): array
     {
-        $request->validate(['urutan' => 'required']);
+        $request->validate(['urutan' => 'required', 'bannerType' => 'required']);
 
-        $file = '';
+        $type = (int) $request->input('bannerType', 0);
+
+        $file = $existing->file_banner ?? '';
         if ($request->hasFile('file_banner')) {
             $f = $request->file('file_banner');
             $file = 'banner_'.kode_unik().'_'.date('ymdHis').'.'.$f->getClientOriginalExtension();
@@ -59,6 +62,11 @@ class BannerController extends Controller
             'nama_banner' => $request->input('bannerName'),
             'link_url' => $request->input('bannerLink'),
             'file_banner' => $file,
+            'banner_type' => $type,
+            // Simpan kode/URL bila diisi (jangan buang walaupun tipe belum diganti).
+            'banner_content' => $request->filled('bannerContent')
+                ? $request->input('bannerContent')
+                : ($existing->banner_content ?? null),
             'urutan' => (int) $request->input('urutan'),
             'status' => $request->input('bannerStatus') === 'yes' ? 'yes' : 'no',
         ];
