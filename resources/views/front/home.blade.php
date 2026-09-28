@@ -36,7 +36,6 @@
 
             @case('hash')
                 <div class="wrap home__hash">
-                    <div class="divider-hash"><span>#</span></div>
                     @include('partials.ad', ['ad' => $frontService->getArticleById(12)])
                 </div>
                 @break

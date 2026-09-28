@@ -232,16 +232,18 @@ p { margin: 0 0 1em; text-wrap: pretty; }
 .home__hash,
 .home__foot-ad { display: none; }
 
-.divider-hash { display: flex; align-items: center; gap: var(--s3); margin: var(--s5) 0; }
-.divider-hash span { font-family: var(--font-serif); font-size: 1.3rem; line-height: 1; color: var(--n-700); }
-.divider-hash::after { content: ""; flex: 1 1 auto; height: 1px; background: var(--n-200); }
-
 /* Kartu kategori (dipakai mobile) */
 .catcards { display: none; }
 .catcard { margin-bottom: var(--s4); border: 1px solid var(--n-200); background: var(--n-0); }
-.catcard__head { margin: 0; padding: var(--s4); border-top: 3px solid var(--brand); border-bottom: 1px solid var(--n-200); font-family: var(--font-sans); font-size: 1rem; font-weight: 700; }
+.catcard__head { margin: 0; border-top: 3px solid var(--brand); border-bottom: 1px solid var(--n-200); font-family: var(--font-sans); font-size: 1rem; font-weight: 700; }
 .catcard__head a { color: var(--n-900); }
+.catcard__head > a { display: block; padding: var(--s4); }
+.catcard__toggle { display: flex; align-items: center; justify-content: space-between; gap: var(--s2); width: 100%; padding: var(--s4); border: 0; background: none; font: inherit; font-weight: 700; color: var(--n-900); text-align: left; cursor: pointer; }
+.catcard__toggle:hover { color: var(--brand); }
+.catcard__toggle[aria-expanded="true"] .catcard__chev { transform: rotate(180deg); }
 .catcard__body { display: grid; gap: var(--s3); padding: var(--s4); }
+.catcard__body[hidden] { display: none; }
+.catcard__all { display: block; margin-top: var(--s1); font-size: .85rem; font-weight: 700; color: var(--brand-strong); }
 .catcard__row { display: flex; align-items: center; justify-content: space-between; gap: var(--s2); width: 100%; padding: 12px 14px; border: 1px solid var(--n-200); background: var(--n-0); font-family: inherit; font-size: .95rem; color: var(--n-700); text-align: left; cursor: pointer; }
 .catcard__row:hover { border-color: var(--brand); color: var(--brand); }
 .catcard__row.is-open { border-color: var(--brand); color: var(--brand); }

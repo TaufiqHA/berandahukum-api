@@ -65,17 +65,19 @@ visual tetap Modern Magazine):
 - **Urutan beranda mobile** (`.home` jadi flex kolom, blok diberi `order`):
   1. **Banner atas** — iklan posisi 2 (di desktop tampil sesudah carousel).
   2. **Carousel** (`partials.slider_atas`) dengan bar caption menempel di bawah.
-  3. **Pembatas `#`** + iklan (`.home__hash`).
+  3. **Iklan** di bawah carousel (`.home__hash`).
   4. **Tile banner** — posisi 8–20, satu kolom (`.home__tiles`).
   5. **Kartu kategori** (`.home__cats`) dari `partials.category_cards`.
   6. **Iklan** sebelum footer (`.home__foot-ad`).
   Section majalah lain ditandai `.home-extra` dan disembunyikan di mobile.
   `.home > * { min-width: 0 }` + `overflow-x: hidden` mencegah `.wrap` memuai
   mengikuti lebar trek slider (yang membuat gambar carousel terpotong).
-- **Kategori**: daftar/grid desktop diganti kartu — header bergaris merah atas +
-  baris subkategori berchevron (`▾`). Klik baris sub-kategori membuka **dropdown**
-  berisi daftar artikelnya (diambil dari `GET /api/v1/subcategories/{uri}`).
-  Urutan kategori memakai kolom `urutan`.
+- **Kategori**: daftar/grid desktop diganti kartu **akordeon dua tingkat** —
+  (1) header kategori bergaris merah atas + chevron (`▾`); klik header membuka
+  daftar sub-kategorinya (satu kategori terbuka dalam satu waktu). Di dalamnya
+  ada tautan "Lihat semua" ke halaman kategori. (2) tiap baris sub-kategori juga
+  expandable: klik membuka **dropdown** berisi daftar artikelnya (diambil dari
+  `GET /api/v1/subcategories/{uri}`). Urutan kategori memakai kolom `urutan`.
 - **Footer**: logo terpusat, lalu kolom Informasi & Follow Us berdampingan.
 Implementasi: `resources/views/partials/category_cards.blade.php`,
 `resources/views/front/home.blade.php`, dan blok `@media (max-width: 720px)`
