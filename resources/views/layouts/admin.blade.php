@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="{{ base_url('assets/datatables/responsive/responsive.bootstrap4.min.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
     <link rel="stylesheet" href="{{ url("css/site.css?v=11") }}">
-    <link rel="stylesheet" href="{{ url("css/admin.css?v=8") }}">
+    <link rel="stylesheet" href="{{ url("css/admin.css?v=11") }}">
     <style>
         textarea#articleEditor { height: 350px; }
     </style>

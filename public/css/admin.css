@@ -114,11 +114,23 @@ body.admin {
     color: var(--n-400); font-size: .85rem; pointer-events: none;
 }
 .admin-search .form-control { padding-left: 34px; }
-.admin-toolbar__reset {
-    font-size: .72rem; font-weight: 800; letter-spacing: .05em; text-transform: uppercase;
-    color: var(--n-500); padding: 8px 4px;
+.admin-toolbar__reset { white-space: nowrap; }
+.admin-toolbar .admin-filter { flex: 0 1 170px; min-width: 140px; max-width: 190px; }
+
+/* Select2 di toolbar disamakan dengan kontrol form Bootstrap */
+.admin-toolbar .select2-container .select2-selection--single {
+    height: calc(1.5em + .75rem + 2px);
+    border: 1px solid #ced4da; border-radius: .25rem;
 }
-.admin-toolbar__reset:hover { color: var(--n-900); text-decoration: none; }
+.admin-toolbar .select2-container .select2-selection--single .select2-selection__rendered {
+    line-height: 1.5; padding: .375rem 1.75rem .375rem .75rem; color: var(--n-800);
+}
+.admin-toolbar .select2-container .select2-selection--single .select2-selection__arrow { height: 100%; }
+.admin-toolbar .select2-container .select2-selection--single .select2-selection__placeholder { color: #6c757d; }
+.admin-toolbar .select2-container--default.select2-container--focus .select2-selection--single,
+.admin-toolbar .select2-container--default.select2-container--open .select2-selection--single {
+    border-color: #80bdff; box-shadow: 0 0 0 .2rem rgba(0,123,255,.25);
+}
 
 /* ---------- Status badge ---------- */
 .status-badge {

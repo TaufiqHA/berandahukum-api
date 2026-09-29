@@ -22,10 +22,33 @@ class ArticleController extends Controller
             $query->where('article_title', 'like', '%'.$request->input('q').'%');
         }
 
+        if ($request->filled('category')) {
+            $query->whereIn('article_id', ArticleCategory::select('article_id')
+                ->where('category_id', (int) $request->input('category')));
+        }
+
+        if ($request->filled('sub_category')) {
+            $query->whereIn('article_id', ArticleCategory::select('article_id')
+                ->where('sub_category_id', (int) $request->input('sub_category')));
+        }
+
+        if ($request->filled('label')) {
+            $query->where('label_id', (int) $request->input('label'));
+        }
+
+        if ($request->filled('author')) {
+            $query->where('article_author', $request->input('author'));
+        }
+
         return view('admin.article.index', [
             'title' => 'Daftar Artikel',
             'articles' => $query->paginate(20)->withQueryString(),
             'labels' => Label::pluck('label_name', 'label_id'),
+            'categories' => Category::orderBy('urutan')->orderBy('category_id')->get(),
+            'subCategories' => SubCategory::orderBy('urutan')->orderBy('sub_category_id')->get(),
+            'authors' => Article::query()
+                ->whereRaw("TRIM(COALESCE(article_author, '')) <> ''")
+                ->distinct()->orderBy('article_author')->pluck('article_author'),
         ]);
     }
 

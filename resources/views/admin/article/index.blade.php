@@ -12,10 +12,32 @@
             <i class="fa fa-search"></i>
             <input type="text" name="q" class="form-control" placeholder="Cari judul artikel" value="{{ request('q') }}">
         </div>
+        <select name="category" id="filterCategory" class="form-control admin-filter">
+            <option value="">Semua Kategori</option>
+            @foreach ($categories as $c)
+                <option value="{{ $c->category_id }}" @selected((string) request('category') === (string) $c->category_id)>{{ $c->category_name }}</option>
+            @endforeach
+        </select>
+        <select name="sub_category" id="filterSubCategory" class="form-control admin-filter">
+            <option value="">Semua Sub Kategori</option>
+            @foreach ($subCategories as $sc)
+                <option value="{{ $sc->sub_category_id }}" data-category="{{ $sc->category_id }}" @selected((string) request('sub_category') === (string) $sc->sub_category_id)>{{ $sc->sub_category_name }}</option>
+            @endforeach
+        </select>
+        <select name="label" class="form-control admin-filter">
+            <option value="">Semua Label</option>
+            @foreach ($labels as $id => $name)
+                <option value="{{ $id }}" @selected((string) request('label') === (string) $id)>{{ $name }}</option>
+            @endforeach
+        </select>
+        <select name="author" class="form-control admin-filter">
+            <option value="">Semua Penulis</option>
+            @foreach ($authors as $author)
+                <option value="{{ $author }}" @selected(request('author') === $author)>{{ $author }}</option>
+            @endforeach
+        </select>
         <button class="btn btn-outline-secondary">Cari</button>
-        @if (request('q'))
-            <a href="{{ url()->current() }}" class="admin-toolbar__reset">Reset</a>
-        @endif
+        <a href="{{ url()->current() }}" class="btn btn-outline-secondary admin-toolbar__reset">Reset</a>
     </form>
 
     <div class="table-responsive">
@@ -58,4 +80,46 @@
     </div>
     {{ $articles->links() }}
 </div>
+
+<script>
+    (function ($) {
+        if (!$ || !$.fn.select2) return;
+
+        var $category = $('#filterCategory');
+        var $sub = $('#filterSubCategory');
+
+        // Semua filter memakai select2 agar tampilannya seragam, bisa dicari,
+        // dan tinggi daftar hasilnya terbatas (mis. penulis yang sangat banyak).
+        $('.admin-filter').each(function () {
+            var $el = $(this);
+            $el.select2({
+                width: '170px',
+                placeholder: $el.find('option:first').text(),
+                allowClear: true,
+            });
+        });
+
+        // Batasi pilihan sub kategori sesuai kategori yang dipilih.
+        function sync() {
+            var selected = $category.val();
+            var current = $sub.val();
+            var currentVisible = false;
+
+            $sub.find('option').each(function () {
+                if (!this.value) return;
+                var match = !selected || this.dataset.category === selected;
+                this.hidden = !match;
+                this.disabled = !match;
+                if (match && this.value === current) currentVisible = true;
+            });
+
+            if (!currentVisible) {
+                $sub.val('').trigger('change.select2');
+            }
+        }
+
+        $category.on('change', sync);
+        sync();
+    })(window.jQuery);
+</script>
 @endsection
