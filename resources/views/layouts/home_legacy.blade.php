@@ -36,7 +36,7 @@
     <link rel="stylesheet" href="{{ base_url('assets/magnific/magnific-popup.css') }}" media="(min-width: 721px)">
     @endif
     {{-- CSS desain lama — hanya untuk mobile --}}
-    <link rel="stylesheet" href="{{ url('css/site.css?v=26') }}" media="(max-width: 720px)">
+    <link rel="stylesheet" href="{{ url('css/site.css?v=28') }}" media="(max-width: 720px)">
     <style>
 		.button-pertanyaan{
 			background-color: #FF0000 !important;

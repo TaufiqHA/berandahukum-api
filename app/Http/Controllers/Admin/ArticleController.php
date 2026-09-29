@@ -208,7 +208,41 @@ class ArticleController extends Controller
 
     private function payload(Request $request, ?Article $existing = null): array
     {
-        $request->validate(['articleTitle' => 'required']);
+        $request->validate([
+            'articleTitle' => ['required', 'string', 'max:255'],
+            'labelId' => ['nullable', 'integer'],
+            'categoryId' => ['nullable', 'integer'],
+            'subCategoryId' => ['nullable', 'integer'],
+            'articleAuthor' => ['required', 'string', 'max:100'],
+            'articleDate' => ['nullable', 'date'],
+            'createDate' => ['nullable', 'date'],
+            'articleImage' => ['nullable', 'image', 'max:2048'],
+            'articlePdf' => ['nullable', 'file', 'mimes:pdf', 'max:10240'],
+            'articleContent' => ['nullable', 'string'],
+            'articleStatus' => ['required', 'in:0,1,2'],
+            'headline' => ['nullable', 'in:1'],
+        ], [
+            'articleTitle.required' => 'Judul artikel wajib diisi.',
+            'articleTitle.string' => 'Judul artikel harus berupa teks.',
+            'articleTitle.max' => 'Judul artikel maksimal 255 karakter.',
+            'labelId.integer' => 'Label yang dipilih tidak valid.',
+            'categoryId.integer' => 'Kategori yang dipilih tidak valid.',
+            'subCategoryId.integer' => 'Sub kategori yang dipilih tidak valid.',
+            'articleAuthor.required' => 'Nama penulis wajib diisi.',
+            'articleAuthor.string' => 'Nama penulis harus berupa teks.',
+            'articleAuthor.max' => 'Nama penulis maksimal 100 karakter.',
+            'articleDate.date' => 'Tanggal artikel tidak valid.',
+            'createDate.date' => 'Tanggal buat tidak valid.',
+            'articleImage.image' => 'File gambar harus berupa gambar (jpg, png, webp, dll).',
+            'articleImage.max' => 'Ukuran gambar maksimal 2 MB.',
+            'articlePdf.file' => 'Berkas PDF gagal diunggah.',
+            'articlePdf.mimes' => 'File harus berformat PDF.',
+            'articlePdf.max' => 'Ukuran PDF maksimal 10 MB.',
+            'articleContent.string' => 'Konten artikel tidak valid.',
+            'articleStatus.required' => 'Status artikel wajib dipilih.',
+            'articleStatus.in' => 'Status artikel yang dipilih tidak valid.',
+            'headline.in' => 'Nilai headline tidak valid.',
+        ]);
 
         $title = $request->input('articleTitle');
 
@@ -232,12 +266,15 @@ class ArticleController extends Controller
             'article_date' => $request->input('articleDate') ?: date('Y-m-d H:i:s'),
             'article_uri' => urlencode(str_replace(' ', '-', strtolower($title))),
             'article_title' => $title,
-            'article_content' => $request->input('articleContent', ''),
+            // Kolom teks NOT NULL: kosong tetap disimpan sebagai string kosong,
+            // bukan null, agar tidak melanggar constraint.
+            'article_content' => (string) $request->input('articleContent', ''),
             'article_img' => $img,
             'article_status' => (int) $request->input('articleStatus', 2),
             'article_pdf' => $pdf,
-            'article_author' => $request->input('articleAuthor', ''),
-            'article_created_by' => auth()->id(),
+            'article_author' => (string) $request->input('articleAuthor', ''),
+            'article_created_by' => auth()->id() ?? 0,
+            'article_views' => $existing->article_views ?? 0,
             'article_created_date' => $existing->article_created_date ?? date('Y-m-d H:i:s'),
             'create_date' => $request->input('createDate') ?: date('Y-m-d'),
         ];

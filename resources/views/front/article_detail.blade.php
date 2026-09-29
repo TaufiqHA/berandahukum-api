@@ -2,33 +2,37 @@
 
 @section('content')
 <div class="wrap">
-    <div class="layout">
+    <div class="layout layout--article">
+        {{-- Header artikel: dipisah ke baris grid sendiri agar sidebar (kolom
+             kanan) mulai sejajar dengan gambar artikel. --}}
+        <div class="article-head">
+            @if (!empty($article['label_id']))
+                @php $lbl = \App\Models\Label::find($article['label_id']); @endphp
+                @if ($lbl)
+                    <a class="kicker" href="{{ site_url('l/'.$lbl->label_uri) }}">{{ $lbl->label_name }}</a>
+                @endif
+            @endif
+            <h1 class="article__title">{{ $article['article_title'] }}</h1>
+            <div class="article__meta">
+                <time datetime="{{ $article['article_date'] ?? '' }}">{{ format_tanggal($article['article_date'] ?? '', 'in') }}</time>
+                <span>&middot;</span>
+                <span>{{ !empty($article['article_author']) ? $article['article_author'] : $admin_name }}</span>
+                <span>&middot;</span>
+                <span>{{ (int) ($article['article_views'] ?? 0) }}x dibaca</span>
+            </div>
+
+            @php $shareUrl = urlencode(site_url('a/'.$article['article_uri'])); $shareTitle = urlencode($article['article_title']); @endphp
+            <div class="card__meta" style="gap:var(--s3);margin-bottom:var(--s4);">
+                <span class="muted small">Bagikan:</span>
+                <a class="small" href="https://twitter.com/intent/tweet?url={{ $shareUrl }}&text={{ $shareTitle }}" target="_blank" rel="noopener">Twitter</a>
+                <a class="small" href="https://www.facebook.com/sharer/sharer.php?u={{ $shareUrl }}" target="_blank" rel="noopener">Facebook</a>
+                <a class="small" href="https://wa.me/?text={{ $shareTitle }}%20{{ $shareUrl }}" target="_blank" rel="noopener">WhatsApp</a>
+                <a class="small" href="https://t.me/share/url?url={{ $shareUrl }}&text={{ $shareTitle }}" target="_blank" rel="noopener">Telegram</a>
+            </div>
+        </div>
+
         <div class="main">
             <article class="article">
-                @if (!empty($article['label_id']))
-                    @php $lbl = \App\Models\Label::find($article['label_id']); @endphp
-                    @if ($lbl)
-                        <a class="kicker" href="{{ site_url('l/'.$lbl->label_uri) }}">{{ $lbl->label_name }}</a>
-                    @endif
-                @endif
-                <h1 class="article__title">{{ $article['article_title'] }}</h1>
-                <div class="article__meta">
-                    <time datetime="{{ $article['article_date'] ?? '' }}">{{ format_tanggal($article['article_date'] ?? '', 'in') }}</time>
-                    <span>&middot;</span>
-                    <span>{{ !empty($article['article_author']) ? $article['article_author'] : $admin_name }}</span>
-                    <span>&middot;</span>
-                    <span>{{ (int) ($article['article_views'] ?? 0) }}x dibaca</span>
-                </div>
-
-                @php $shareUrl = urlencode(site_url('a/'.$article['article_uri'])); $shareTitle = urlencode($article['article_title']); @endphp
-                <div class="card__meta" style="gap:var(--s3);margin-bottom:var(--s4);">
-                    <span class="muted small">Bagikan:</span>
-                    <a class="small" href="https://twitter.com/intent/tweet?url={{ $shareUrl }}&text={{ $shareTitle }}" target="_blank" rel="noopener">Twitter</a>
-                    <a class="small" href="https://www.facebook.com/sharer/sharer.php?u={{ $shareUrl }}" target="_blank" rel="noopener">Facebook</a>
-                    <a class="small" href="https://wa.me/?text={{ $shareTitle }}%20{{ $shareUrl }}" target="_blank" rel="noopener">WhatsApp</a>
-                    <a class="small" href="https://t.me/share/url?url={{ $shareUrl }}&text={{ $shareTitle }}" target="_blank" rel="noopener">Telegram</a>
-                </div>
-
                 @if (!empty($article['article_img']) && is_file(public_path('uploads/img/'.$article['article_img'])))
                     <figure class="article__figure">
                         <img src="{{ url('uploads/img/'.$article['article_img']) }}" alt="{{ $article['article_title'] }}">

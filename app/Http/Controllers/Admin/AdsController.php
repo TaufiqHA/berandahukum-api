@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Ads;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class AdsController extends Controller
 {
@@ -48,17 +49,53 @@ class AdsController extends Controller
 
     private function payload(Request $request, ?Ads $existing = null): array
     {
-        $request->validate(['adsPosition' => 'required', 'adsType' => 'required', 'adsFileType' => 'required']);
+        $isUpload = $request->input('adsType') === '0';
+
+        $rules = [
+            'adsPosition' => ['required', 'integer', 'min:1', 'max:35'],
+            'adsType' => ['required', Rule::in(['0', '1'])],
+            // Iklan unggahan (Gambar Upload) hanya boleh bertipe file Gambar.
+            'adsFileType' => ['required', Rule::in($isUpload ? ['0'] : ['0', '1', '2'])],
+            'ads_link' => ['nullable', 'string', 'max:191'],
+        ];
+
+        if ($isUpload) {
+            $rules['adsFile'] = [
+                Rule::requiredIf(fn () => ! $existing || (string) $existing->ads_url === ''),
+                'image',
+                'max:2048',
+            ];
+        } else {
+            $rules['adsUrl'] = ['required', 'string'];
+        }
+
+        $messages = [
+            'adsPosition.required' => 'Posisi iklan wajib diisi.',
+            'adsPosition.integer' => 'Posisi iklan harus berupa angka.',
+            'adsPosition.min' => 'Posisi iklan minimal 1.',
+            'adsPosition.max' => 'Posisi iklan maksimal 35.',
+            'adsType.required' => 'Tipe iklan wajib dipilih.',
+            'adsType.in' => 'Tipe iklan yang dipilih tidak valid.',
+            'adsFileType.required' => 'Tipe file wajib dipilih.',
+            'adsFileType.in' => 'Tipe file tidak sesuai dengan tipe iklan. Untuk Gambar Upload, pilih tipe file Gambar.',
+            'adsFile.required' => 'Gambar iklan wajib diunggah.',
+            'adsFile.image' => 'File yang diunggah harus berupa gambar (jpg, png, gif, webp, dll).',
+            'adsFile.max' => 'Ukuran gambar maksimal 2 MB.',
+            'adsUrl.required' => 'URL / kode embed wajib diisi.',
+            'ads_link.max' => 'Link terlalu panjang (maksimal 191 karakter).',
+        ];
+
+        $request->validate($rules, $messages);
 
         $data = [
             'ads_position' => (int) $request->input('adsPosition'),
             'ads_type' => $request->input('adsType'),
             'ads_file_type' => $request->input('adsFileType'),
-            'ads_link' => $request->input('ads_link'),
+            'ads_link' => $request->input('ads_link') ?: '#',
             'ads_status' => '1',
         ];
 
-        if ($request->input('adsType') == '0') {
+        if ($isUpload) {
             if ($request->hasFile('adsFile')) {
                 $file = $request->file('adsFile');
                 $name = kode_unik().'_'.date('ymdHis').'.'.$file->getClientOriginalExtension();
@@ -70,7 +107,7 @@ class AdsController extends Controller
                 $data['ads_url'] = '';
             }
         } else {
-            $data['ads_url'] = $request->input('adsUrl');
+            $data['ads_url'] = (string) $request->input('adsUrl');
         }
 
         return $data;

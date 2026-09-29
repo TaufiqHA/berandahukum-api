@@ -20,15 +20,4 @@
             </form>
         </div>
     </div>
-
-    @if (!empty($frontCategoriesTree))
-        <div class="sectionbar">
-            <div class="wrap sectionbar__inner">
-                <span class="kicker">Rubrik</span>
-                @foreach ($frontCategoriesTree as $cat)
-                    <a href="{{ site_url('k/'.$cat['uri']) }}">{{ $cat['name'] }}</a>
-                @endforeach
-            </div>
-        </div>
-    @endif
 </header>

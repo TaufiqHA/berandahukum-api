@@ -213,6 +213,19 @@ p { margin: 0 0 1em; text-wrap: pretty; }
 
 /* ============ Sidebar / rail ============ */
 .layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: var(--s7); align-items: start; }
+/* Halaman artikel: kolom konten selebar area baca, sidebar mulai sejajar
+   dengan gambar artikel (header artikel menempati baris tersendiri), dan
+   jarak artikel–sidebar dirapatkan. */
+.layout--article {
+    grid-template-columns: minmax(0, var(--measure)) 320px;
+    column-gap: var(--s5);
+    row-gap: 0;
+    justify-content: center;
+}
+.layout--article .article-head { grid-column: 1 / -1; grid-row: 1; min-width: 0; }
+.layout--article .main { grid-column: 1; grid-row: 2; }
+.layout--article .side { grid-column: 2; grid-row: 2; }
+.layout--article .main > .article > .article__figure:first-child { margin-top: 0; }
 .main { min-width: 0; }
 .side { min-width: 0; }
 .widget { border-top: 2px solid var(--n-900); padding: var(--s4) 0 var(--s5); }
@@ -341,6 +354,10 @@ p { margin: 0 0 1em; text-wrap: pretty; }
 }
 @media (max-width: 980px) {
     .layout { grid-template-columns: 1fr; gap: var(--s6); }
+    .layout--article { justify-content: normal; }
+    .layout--article .article-head,
+    .layout--article .main,
+    .layout--article .side { grid-column: 1; grid-row: auto; }
     .lead, .hero { grid-template-columns: 1fr; }
     .lead__rail, .hero__list { border-left: 0; padding-left: 0; border-top: 1px solid var(--n-200); padding-top: var(--s4); }
     .grid--3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
