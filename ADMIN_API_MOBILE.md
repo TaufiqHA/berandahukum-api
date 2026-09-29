@@ -113,6 +113,27 @@ Mengatur urutan + tampil/sembunyikan section beranda (sama seperti menu
 
 `scope`: `both` \| `mobile` \| `desktop` — hanya penanda di mana section tampil.
 
+### Iklan mobile
+
+Mengelola iklan beranda aplikasi di `tbl_ads`. Mendukung dua jenis:
+
+- **gambar** (`kind=image`, bawaan): banner gambar + tautan opsional.
+- **AdMob** (`kind=admob`): iklan native (in-feed); hanya menyimpan
+  Ad Unit ID, tanpa gambar.
+
+| Metode | Endpoint | Keterangan |
+|--------|----------|------------|
+| GET | `ads` | Daftar iklan → `{data:[{id,type,image,admob_unit,link,position,category_id}]}` |
+| POST | `ads` | Tambah: `{kind, position, link?, category_id?, image?}` (multipart) atau `{kind:"admob", admob_unit, position, category_id?}` |
+| POST | `ads/{id}` | Ubah (boleh berpindah jenis iklan) |
+| POST | `ads/urutan` | Simpan urutan hasil geser: `{position:<penempatan>, ids:[id,…]}` |
+| DELETE | `ads/{id}` | Hapus iklan |
+
+`position`: `100` antar kategori, `101` bawah beranda (maks 3), `102` atas
+beranda (maks 2), `103` atas artikel (maks 2). `kind=image` mewajibkan berkas
+`image` saat menambah; `kind=admob` mewajibkan `admob_unit` (format
+`ca-app-pub-…/…`). `category_id` hanya berlaku untuk posisi `100`.
+
 Status HTTP: `401` belum/kadaluarsa token, `403` bukan admin, `422` validasi.
 
 ## Contoh
@@ -143,10 +164,13 @@ mengembalikan komponen yang sama dengan situs mobile:
 | `ads_middle` | Banner setelah pembatas `#` — iklan posisi 12 |
 | `banners` | Tile banner (posisi 9–20; posisi 8/Google Play **dikecualikan** untuk app), tiap item `{image, link}` |
 | `ads_bottom` | Iklan sebelum footer (posisi 7) |
+| `ads_kategori` / `ads_atas` / `ads_bawah` | Iklan mobile: `{type,image,link,category_id}` (gambar) atau `{type:"admob",admob_unit,category_id}` |
 | `categories[].subs` | Sub-kategori untuk kartu accordion |
 
-Catatan: hanya **iklan gambar** (`ads_type=0` & `ads_file_type=0`) yang
-dikirim; skrip/embed diabaikan. URL gambar relatif (`uploads/i/...`).
+Catatan: setiap item iklan punya `type` bernilai `image` atau `admob`.
+Iklan gambar (`ads_type=0` & `ads_file_type=0`) mengirim `{image, link}`;
+iklan AdMob native mengirim `{admob_unit}`. Skrip/embed web tetap diabaikan.
+URL gambar relatif (`uploads/i/...`).
 `categories` kini hanya berisi kategori `category_show=yes` dengan
 sub-kategori `sub_category_show=yes`, diurutkan kolom `urutan`. Sub-kategori
 (`categories[].subs`) juga diurutkan kolom `urutan`, sedangkan daftar artikel

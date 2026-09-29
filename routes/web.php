@@ -29,7 +29,21 @@ use App\Http\Controllers\Front\PertanyaanController;
 use App\Http\Controllers\Front\RssController;
 use App\Http\Controllers\Front\SearchController;
 use App\Http\Controllers\Front\SettingsController as FrontSettingsController;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| Menjalankan migrasi
+|--------------------------------------------------------------------------
+| Untuk environment tanpa akses terminal (mis. shared hosting).
+| Contoh: /migrate
+*/
+Route::get('/migrate', function () {
+    Artisan::call('migrate', ['--force' => true]);
+
+    return response(Artisan::output(), 200)->header('Content-Type', 'text/plain');
+});
 
 /*
 |--------------------------------------------------------------------------

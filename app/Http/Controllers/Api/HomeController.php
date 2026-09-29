@@ -6,7 +6,6 @@ use App\Models\Ads;
 use App\Models\Article;
 use App\Models\Category;
 use App\Models\Label;
-use App\Models\Pilihan;
 use App\Models\SubCategory;
 use App\Models\SysSetting;
 
@@ -63,11 +62,12 @@ class HomeController extends BaseApiController
         $banners = collect([9, 10, 16, 17, 18, 19, 20])
             ->map(fn ($p) => $ad($p))->filter()->values()->all();
 
-        // Iklan antar-kategori (khusus aplikasi mobile, posisi 100).
+        // Iklan antar-kategori (khusus aplikasi mobile, posisi 100). Mendukung
+        // gambar maupun AdMob (ads_kind=1).
         $adsKategori = Ads::where('ads_position', 100)->where('ads_status', '1')
-            ->where('ads_type', 0)->where('ads_file_type', 0)->orderBy('ads_id')
+            ->orderBy('ads_urutan')->orderBy('ads_id')
             ->get()->map(function ($a) {
-                $data = $this->adImage($a);
+                $data = $this->adMobile($a);
                 if ($data === null) {
                     return null;
                 }
@@ -78,13 +78,13 @@ class HomeController extends BaseApiController
 
         // Iklan atas beranda (antara banner atas & carousel), maksimal 2.
         $adsAtas = Ads::where('ads_position', 102)->where('ads_status', '1')
-            ->where('ads_type', 0)->where('ads_file_type', 0)->orderBy('ads_id')
-            ->limit(2)->get()->map(fn ($a) => $this->adImage($a))->filter()->values()->all();
+            ->orderBy('ads_urutan')->orderBy('ads_id')
+            ->get()->map(fn ($a) => $this->adMobile($a))->filter()->take(2)->values()->all();
 
         // Iklan bawah beranda (sebelum footer), maksimal 3.
         $adsBawah = Ads::where('ads_position', 101)->where('ads_status', '1')
-            ->where('ads_type', 0)->where('ads_file_type', 0)->orderBy('ads_id')
-            ->limit(3)->get()->map(fn ($a) => $this->adImage($a))->filter()->values()->all();
+            ->orderBy('ads_urutan')->orderBy('ads_id')
+            ->get()->map(fn ($a) => $this->adMobile($a))->filter()->take(3)->values()->all();
 
         $sys = SysSetting::first();
 

@@ -5,11 +5,10 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Ads;
 use App\Models\Article;
-use App\Models\Category;
 use App\Models\Comment;
 use App\Models\Label;
 use App\Models\Referensi;
-use App\Models\SubCategory;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 /**
@@ -71,10 +70,10 @@ abstract class BaseApiController extends Controller
 
         // Iklan di atas artikel (antara AppBar & judul), maksimal 2.
         $data['ads_atas'] = Ads::where('ads_position', 103)->where('ads_status', '1')
-            ->where('ads_type', 0)->where('ads_file_type', 0)->orderBy('ads_id')
-            ->limit(2)->get()->map(fn ($ad) => $this->adImage($ad))->filter()->values()->all();
+            ->orderBy('ads_urutan')->orderBy('ads_id')->get()
+            ->map(fn ($ad) => $this->adMobile($ad))->filter()->take(2)->values()->all();
 
-        $data['categories'] = \Illuminate\Support\Facades\DB::table('tbl_article_category as ac')
+        $data['categories'] = DB::table('tbl_article_category as ac')
             ->leftJoin('tbl_category as c', 'ac.category_id', '=', 'c.category_id')
             ->leftJoin('tbl_sub_category as sc', 'ac.sub_category_id', '=', 'sc.sub_category_id')
             ->where('ac.article_id', $a['article_id'])
@@ -143,8 +142,38 @@ abstract class BaseApiController extends Controller
         }
 
         return [
+            'type' => 'image',
             'image' => str_starts_with($file, 'http') ? $file : 'uploads/i/'.$file,
             'link' => $link,
         ];
+    }
+
+    /**
+     * Ringkasan iklan untuk aplikasi mobile, mendukung dua jenis:
+     *   - gambar : `{type: "image", image, link}`
+     *   - AdMob  : `{type: "admob", admob_unit}` (dari ads_kind=1)
+     * Iklan skrip/embed web (HTML/iframe) diabaikan.
+     */
+    protected function adMobile(?object $ad): ?array
+    {
+        if (! $ad) {
+            return null;
+        }
+
+        if ((int) ($ad->ads_kind ?? 0) === 1) {
+            $unit = trim((string) ($ad->ads_admob_unit ?? ''));
+            if ($unit === '') {
+                return null;
+            }
+
+            return ['type' => 'admob', 'admob_unit' => $unit];
+        }
+
+        // Selain AdMob, hanya iklan gambar yang bisa dirender di aplikasi.
+        if ((int) ($ad->ads_type ?? 0) !== 0 || (int) ($ad->ads_file_type ?? 0) !== 0) {
+            return null;
+        }
+
+        return $this->adImage($ad);
     }
 }

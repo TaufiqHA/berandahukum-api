@@ -109,6 +109,7 @@ Route::prefix('v1/admin')->group(function () {
 
             // Iklan antar-kategori (khusus aplikasi mobile, posisi 100)
             Route::get('ads', [AdminAdsController::class, 'index']);
+            Route::post('ads/urutan', [AdminAdsController::class, 'urutan']);
             Route::post('ads', [AdminAdsController::class, 'store']);
             Route::post('ads/{id}', [AdminAdsController::class, 'update'])->whereNumber('id');
             Route::delete('ads/{id}', [AdminAdsController::class, 'destroy'])->whereNumber('id');
