@@ -12,6 +12,7 @@
  *   - PRIMARY KEY + AUTO_INCREMENT yang benar,
  *   - kolom baru app: tbl_ads.ads_category_id, tbl_sub_category.urutan,
  *     tbl_article_category.urutan, tbl_settings.tipe 'layout',
+ *     tbl_banner.banner_type, tbl_banner.banner_content,
  *   - tabel app: migrations, tbl_api_token.
  */
 
@@ -122,6 +123,8 @@ $schemas = [
             'link_url' => 'text DEFAULT NULL',
             'status' => "enum('yes','no') DEFAULT 'yes'",
             'urutan' => 'tinyint(4) DEFAULT NULL',
+            'banner_type' => 'int(11) NOT NULL DEFAULT 0',
+            'banner_content' => 'longtext DEFAULT NULL',
         ],
         'primary' => ['id_banner'],
     ],

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Banner;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 
 class BannerController extends Controller
 {
@@ -58,18 +59,49 @@ class BannerController extends Controller
             $f->move(public_path('uploads/img'), $file);
         }
 
-        return [
+        // Simpan kode/URL bila diisi (jangan buang walaupun tipe belum diganti).
+        $content = $request->filled('bannerContent')
+            ? $request->input('bannerContent')
+            : ($existing->banner_content ?? null);
+
+        // Data lama (sebelum ada kolom banner_content) menyimpan kode script/iframe
+        // di link_url. Pindahkan ke banner_content agar form & beranda benar.
+        if (($content === null || trim((string) $content) === '') && $existing && $type !== 0) {
+            $legacy = (string) ($existing->link_url ?? '');
+            if ($legacy !== '' && preg_match('/<[a-z!\/]/i', $legacy)) {
+                $content = $legacy;
+            }
+        }
+
+        $data = [
             'nama_banner' => $request->input('bannerName'),
-            'link_url' => $request->input('bannerLink'),
             'file_banner' => $file,
-            'banner_type' => $type,
-            // Simpan kode/URL bila diisi (jangan buang walaupun tipe belum diganti).
-            'banner_content' => $request->filled('bannerContent')
-                ? $request->input('bannerContent')
-                : ($existing->banner_content ?? null),
             'urutan' => (int) $request->input('urutan'),
             'status' => $request->input('bannerStatus') === 'yes' ? 'yes' : 'no',
         ];
+
+        if ($this->hasTypeColumns()) {
+            $data['banner_type'] = $type;
+            $data['banner_content'] = $content;
+            // link_url hanya dipakai oleh tipe Gambar.
+            $data['link_url'] = $type === 0 ? $request->input('bannerLink') : null;
+        } else {
+            // Skema lama (kolom banner_type/banner_content belum ada):
+            // simpan script/iframe di link_url agar tidak error saat menyimpan.
+            $data['link_url'] = $type === 0 ? $request->input('bannerLink') : $content;
+        }
+
+        return $data;
+    }
+
+    /**
+     * Kolom banner_type & banner_content ditambahkan lewat migrasi.
+     * Cek agar penyimpanan tetap jalan walau migrasi belum dijalankan.
+     */
+    private function hasTypeColumns(): bool
+    {
+        return Schema::hasColumn('tbl_banner', 'banner_type')
+            && Schema::hasColumn('tbl_banner', 'banner_content');
     }
 
     private function decrypt(string $id): int

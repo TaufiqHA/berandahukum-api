@@ -133,32 +133,62 @@
 <hr class="d-lg-flex">
 <!--BANER HOME -->
 @if (! empty($banner_home))
-<div class="row">
-	
-	<div class="col-md-12 owl-carousel owl-theme" id="banner_home" >
-	@foreach ($banner_home as $a)
-	@php
+@php
+    $bannerScripts = [];
+    $bannerVisuals = [];
+    foreach ($banner_home as $a) {
         $btype = (int) ($a['banner_type'] ?? 0);
+        $bcontent = $a['banner_content'] ?? '';
+
+        // Fallback skema lama: kode script/iframe disimpan di link_url.
+        if (trim((string) $bcontent) === '' && ! empty($a['link_url']) && preg_match('/<[a-z!\/]/i', (string) $a['link_url'])) {
+            $btype = 2;
+            $bcontent = $a['link_url'];
+        }
+
         $banner_img = 'uploads/img/'.($a['file_banner'] ?? '');
         $hasBannerImg = ! empty($a['file_banner']) && is_file(public_path($banner_img));
-    @endphp
-	@if ($btype === 2 && ! empty($a['banner_content']))
-	<div class="item" style="margin-bottom: 10px;" >
-		{!! $a['banner_content'] !!}
-    </div>
-	@elseif ($btype === 1 && ! empty($a['banner_content']))
+
+        if ($btype === 2 && trim((string) $bcontent) !== '') {
+            $bannerScripts[] = $bcontent;
+        } else {
+            $bannerVisuals[] = [
+                'type' => $btype,
+                'content' => $bcontent,
+                'link' => $a['link_url'] ?? '',
+                'img' => $banner_img,
+                'has_img' => $hasBannerImg,
+            ];
+        }
+    }
+@endphp
+
+{{-- Script / HTML dirender di luar owl-carousel agar benar-benar dieksekusi. --}}
+@foreach ($bannerScripts as $code)
+<div class="row">
+	<div class="col-md-12" style="margin-bottom: 10px;">
+		{!! $code !!}
+	</div>
+</div>
+@endforeach
+
+@if (! empty($bannerVisuals))
+<div class="row">
+	<div class="col-md-12 owl-carousel owl-theme" id="banner_home" >
+	@foreach ($bannerVisuals as $a)
+	@if ($a['type'] === 1 && trim((string) $a['content']) !== '')
 	<div class="item" style="margin-bottom: 10px;" >
 		<div class="blog-first clearfix">
                     <div class="embed-responsive embed-responsive-16by9" style="border-radius: 4px;">
-                        <iframe class="embed-responsive-item" src="{{ $a['banner_content'] }}" allowfullscreen></iframe>
+                        <iframe class="embed-responsive-item" src="{{ $a['content'] }}" allowfullscreen></iframe>
                     </div>
        </div>
     </div>
-	@elseif ($hasBannerImg)
+	@elseif ($a['has_img'])
 	<div class="item" style="margin-bottom: 10px;" >
 		<div class="blog-first clearfix">
                     <div >
-                        <a href="{{ $a['link_url'] }}" target="_blank"><img class="image-ap" src="{{ base_url($banner_img) }}"   alt=""></a>
+                        <a href="{{ $a['link'] }}" target="_blank"><img class="image-ap" src="{{ base_url($a['img']) }}"   alt=""></a>
                     </div>
                     
        </div>
@@ -167,6 +197,7 @@
     @endforeach
     </div>
 </div>
+@endif
 @endif
 <!--END BANNER-->
 @if (! empty($article_pilihanatas))

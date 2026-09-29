@@ -26,5 +26,6 @@ Homestead.yaml
 Thumbs.db
 /database/*.sqlite
 /database/*.sqlite.bak
+/build
 /public/assets
 /public/uploads
