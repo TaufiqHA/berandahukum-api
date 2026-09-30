@@ -259,12 +259,6 @@
                 @endif
                 @break
 
-            @case('mitra')
-                <div class="home-extra">
-                    @include('partials.slider_bawah')
-                </div>
-                @break
-
             @case('iklan_bawah')
                 <div class="wrap home__foot-ad">
                     @include('partials.ad', ['ad' => $frontService->getArticleById(7)])

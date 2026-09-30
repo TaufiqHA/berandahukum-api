@@ -34,7 +34,6 @@ class HomeLayout
             'most_read' => ['label' => 'Paling Banyak Dibaca/Dikomentari', 'scope' => 'desktop'],
             'quote' => ['label' => 'Quote', 'scope' => 'desktop'],
             'youtube' => ['label' => 'Youtube', 'scope' => 'desktop'],
-            'mitra' => ['label' => 'Mitra', 'scope' => 'desktop'],
             'iklan_bawah' => ['label' => 'Iklan Bawah', 'scope' => 'mobile'],
         ];
     }

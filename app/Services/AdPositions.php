@@ -5,7 +5,7 @@ namespace App\Services;
 /**
  * Keterangan penempatan iklan (kolom tbl_ads.ads_position).
  *
- * Posisi 1–35 dipakai halaman situs web, sedangkan posisi 100–103 khusus
+ * Posisi 1–23 dipakai halaman situs web, sedangkan posisi 100–103 khusus
  * aplikasi mobile (dikelola dari panel mobile). Peta ini dipakai panel admin
  * web agar pengelola tahu tiap nomor posisi tampil di bagian mana.
  */
@@ -42,18 +42,6 @@ class AdPositions
             21 => 'Beranda — bawah, setelah posisi 7',
             22 => 'Beranda — bawah, setelah posisi 21',
             23 => 'Beranda — bawah, setelah posisi 22',
-            24 => 'Beranda — section Mitra (grid, kolom 1)',
-            25 => 'Beranda — section Mitra (grid, kolom 2)',
-            26 => 'Beranda — section Mitra (grid, kolom 3)',
-            27 => 'Beranda — section Mitra (grid, kolom 4)',
-            28 => 'Beranda — section Mitra (grid, kolom 5)',
-            29 => 'Beranda — section Mitra (grid, kolom 6)',
-            30 => 'Beranda — section Mitra (grid, kolom 7)',
-            31 => 'Beranda — section Mitra (grid, kolom 8)',
-            32 => 'Beranda — section Mitra (grid, kolom 9)',
-            33 => 'Beranda — section Mitra (grid, kolom 10)',
-            34 => 'Beranda — section Mitra (grid, kolom 11)',
-            35 => 'Beranda — section Mitra (grid, kolom 12)',
         ];
     }
 

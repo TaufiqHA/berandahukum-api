@@ -169,9 +169,6 @@
                 <div class="col-md-4">
                     @include('legacy.side')
                 </div>
-				<div class="col-md-12">
-					@include('legacy.slider_bawah')
-				</div>	
             </div>
         </div>
     </div>
