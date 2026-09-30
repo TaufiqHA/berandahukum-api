@@ -10,10 +10,15 @@ use App\Models\Comment;
 use App\Models\Label;
 use App\Models\Referensi;
 use App\Models\SubCategory;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class ArticleController extends Controller
 {
+    /** Panjang maksimum kolom article_title/article_uri di database. */
+    private const TITLE_MAX = 100;
+
     public function index(Request $request)
     {
         $query = Article::orderByDesc('article_id');
@@ -22,17 +27,25 @@ class ArticleController extends Controller
             $query->where('article_title', 'like', '%'.$request->input('q').'%');
         }
 
-        if ($request->filled('category')) {
+        // Nilai "none" = artikel tanpa kategori / sub kategori / label.
+        if ($request->input('category') === 'none') {
+            $query->whereNotIn('article_id', ArticleCategory::select('article_id'));
+        } elseif ($request->filled('category')) {
             $query->whereIn('article_id', ArticleCategory::select('article_id')
                 ->where('category_id', (int) $request->input('category')));
         }
 
-        if ($request->filled('sub_category')) {
+        if ($request->input('sub_category') === 'none') {
+            $query->whereNotIn('article_id', ArticleCategory::select('article_id')
+                ->where('sub_category_id', '>', 0));
+        } elseif ($request->filled('sub_category')) {
             $query->whereIn('article_id', ArticleCategory::select('article_id')
                 ->where('sub_category_id', (int) $request->input('sub_category')));
         }
 
-        if ($request->filled('label')) {
+        if ($request->input('label') === 'none') {
+            $query->where('label_id', 0);
+        } elseif ($request->filled('label')) {
             $query->where('label_id', (int) $request->input('label'));
         }
 
@@ -40,9 +53,31 @@ class ArticleController extends Controller
             $query->where('article_author', $request->input('author'));
         }
 
+        if ($request->filled('status')) {
+            $query->where('article_status', (int) $request->input('status'));
+        }
+
+        $articles = $query->paginate(20)->withQueryString();
+
+        // Peta kategori & sub kategori untuk artikel pada halaman ini.
+        $pairs = ArticleCategory::whereIn('article_id', $articles->pluck('article_id'))
+            ->get()->keyBy('article_id');
+        $categoryNames = Category::pluck('category_name', 'category_id');
+        $subCategoryNames = SubCategory::pluck('sub_category_name', 'sub_category_id');
+
+        $articleMeta = [];
+        foreach ($articles as $a) {
+            $pair = $pairs->get($a->article_id);
+            $articleMeta[$a->article_id] = [
+                'category' => ($pair && $pair->category_id) ? ($categoryNames[$pair->category_id] ?? '-') : '-',
+                'sub_category' => ($pair && $pair->sub_category_id) ? ($subCategoryNames[$pair->sub_category_id] ?? '-') : '-',
+            ];
+        }
+
         return view('admin.article.index', [
             'title' => 'Daftar Artikel',
-            'articles' => $query->paginate(20)->withQueryString(),
+            'articles' => $articles,
+            'articleMeta' => $articleMeta,
             'labels' => Label::pluck('label_name', 'label_id'),
             'categories' => Category::orderBy('urutan')->orderBy('category_id')->get(),
             'subCategories' => SubCategory::orderBy('urutan')->orderBy('sub_category_id')->get(),
@@ -83,7 +118,14 @@ class ArticleController extends Controller
 
     public function store(Request $request)
     {
-        $article = Article::create($this->payload($request));
+        $data = $this->payload($request);
+
+        try {
+            $article = Article::create($data);
+        } catch (QueryException $e) {
+            $this->failWhenDataTooLong($e);
+        }
+
         $this->syncCategory($article, $request);
 
         return redirect(site_admin('article'))->with('msg_flash', success_message('Data artikel berhasil disimpan.'));
@@ -92,7 +134,14 @@ class ArticleController extends Controller
     public function update(Request $request, $id)
     {
         $article = Article::findOrFail($id);
-        $article->update($this->payload($request, $article));
+        $data = $this->payload($request, $article);
+
+        try {
+            $article->update($data);
+        } catch (QueryException $e) {
+            $this->failWhenDataTooLong($e);
+        }
+
         $this->syncCategory($article, $request);
 
         return redirect(site_admin('article'))->with('msg_flash', success_message('Data artikel berhasil disimpan.'));
@@ -209,7 +258,7 @@ class ArticleController extends Controller
     private function payload(Request $request, ?Article $existing = null): array
     {
         $request->validate([
-            'articleTitle' => ['required', 'string', 'max:255'],
+            'articleTitle' => ['required', 'string', 'max:'.self::TITLE_MAX],
             'labelId' => ['nullable', 'integer'],
             'categoryId' => ['nullable', 'integer'],
             'subCategoryId' => ['nullable', 'integer'],
@@ -224,7 +273,7 @@ class ArticleController extends Controller
         ], [
             'articleTitle.required' => 'Judul artikel wajib diisi.',
             'articleTitle.string' => 'Judul artikel harus berupa teks.',
-            'articleTitle.max' => 'Judul artikel maksimal 255 karakter.',
+            'articleTitle.max' => 'Judul artikel maksimal '.self::TITLE_MAX.' karakter.',
             'labelId.integer' => 'Label yang dipilih tidak valid.',
             'categoryId.integer' => 'Kategori yang dipilih tidak valid.',
             'subCategoryId.integer' => 'Sub kategori yang dipilih tidak valid.',
@@ -246,6 +295,15 @@ class ArticleController extends Controller
 
         $title = $request->input('articleTitle');
 
+        // URL artikel dibuat dari judul. Kolom article_uri hanya varchar(100),
+        // jadi panjangnya divalidasi agar tidak memicu error database.
+        $uri = urlencode(str_replace(' ', '-', strtolower($title)));
+        if (strlen($uri) > self::TITLE_MAX) {
+            throw ValidationException::withMessages([
+                'articleTitle' => 'Judul menghasilkan URL artikel yang terlalu panjang (maksimal '.self::TITLE_MAX.' karakter). Silakan persingkat judul.',
+            ]);
+        }
+
         $img = $existing->article_img ?? null;
         if ($request->hasFile('articleImage')) {
             $f = $request->file('articleImage');
@@ -264,7 +322,7 @@ class ArticleController extends Controller
             'label_id' => (int) $request->input('labelId', 0),
             'headline_news' => $request->input('headline') == '1' ? 1 : 0,
             'article_date' => $request->input('articleDate') ?: date('Y-m-d H:i:s'),
-            'article_uri' => urlencode(str_replace(' ', '-', strtolower($title))),
+            'article_uri' => $uri,
             'article_title' => $title,
             // Kolom teks NOT NULL: kosong tetap disimpan sebagai string kosong,
             // bukan null, agar tidak melanggar constraint.
@@ -278,6 +336,24 @@ class ArticleController extends Controller
             'article_created_date' => $existing->article_created_date ?? date('Y-m-d H:i:s'),
             'create_date' => $request->input('createDate') ?: date('Y-m-d'),
         ];
+    }
+
+    /**
+     * Ubah error database "Data too long" menjadi pesan validasi agar pengguna
+     * tahu harus memperpendek isian, bukan mendapat halaman error 500.
+     */
+    private function failWhenDataTooLong(QueryException $e): never
+    {
+        $tooLong = (int) ($e->errorInfo[1] ?? 0) === 1406
+            || str_contains($e->getMessage(), 'Data too long');
+
+        if (! $tooLong) {
+            throw $e;
+        }
+
+        throw ValidationException::withMessages([
+            'articleTitle' => 'Judul artikel terlalu panjang untuk disimpan (melebihi batas kolom database). Silakan persingkat judul artikel.',
+        ]);
     }
 
     private function syncCategory(Article $article, Request $request): void

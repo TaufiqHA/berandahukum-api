@@ -14,18 +14,21 @@
         </div>
         <select name="category" id="filterCategory" class="form-control admin-filter">
             <option value="">Semua Kategori</option>
+            <option value="none" @selected(request('category') === 'none')>Tanpa Kategori</option>
             @foreach ($categories as $c)
                 <option value="{{ $c->category_id }}" @selected((string) request('category') === (string) $c->category_id)>{{ $c->category_name }}</option>
             @endforeach
         </select>
         <select name="sub_category" id="filterSubCategory" class="form-control admin-filter">
             <option value="">Semua Sub Kategori</option>
+            <option value="none" @selected(request('sub_category') === 'none')>Tanpa Sub Kategori</option>
             @foreach ($subCategories as $sc)
                 <option value="{{ $sc->sub_category_id }}" data-category="{{ $sc->category_id }}" @selected((string) request('sub_category') === (string) $sc->sub_category_id)>{{ $sc->sub_category_name }}</option>
             @endforeach
         </select>
         <select name="label" class="form-control admin-filter">
             <option value="">Semua Label</option>
+            <option value="none" @selected(request('label') === 'none')>Tanpa Label</option>
             @foreach ($labels as $id => $name)
                 <option value="{{ $id }}" @selected((string) request('label') === (string) $id)>{{ $name }}</option>
             @endforeach
@@ -36,18 +39,26 @@
                 <option value="{{ $author }}" @selected(request('author') === $author)>{{ $author }}</option>
             @endforeach
         </select>
+        <select name="status" class="form-control admin-filter">
+            <option value="">Semua Status</option>
+            <option value="1" @selected(request('status') === '1')>Publish</option>
+            <option value="2" @selected(request('status') === '2')>Draft</option>
+            <option value="0" @selected(request('status') === '0')>Non Aktif</option>
+        </select>
         <button class="btn btn-outline-secondary">Cari</button>
         <a href="{{ url()->current() }}" class="btn btn-outline-secondary admin-toolbar__reset">Reset</a>
     </form>
 
     <div class="table-responsive">
         <table class="table table-sm table-striped">
-            <thead><tr><th>#</th><th>Judul</th><th>Label</th><th>Status</th><th>Tanggal</th><th class="text-right">Aksi</th></tr></thead>
+            <thead><tr><th>#</th><th>Judul</th><th>Kategori</th><th>Sub Kategori</th><th>Label</th><th>Status</th><th>Tanggal</th><th class="text-right">Aksi</th></tr></thead>
             <tbody>
             @foreach ($articles as $r)
                 <tr>
                     <td>{{ $loop->iteration + ($articles->currentPage() - 1) * $articles->perPage() }}</td>
                     <td>{{ $r->article_title }}</td>
+                    <td>{{ $articleMeta[$r->article_id]['category'] ?? '-' }}</td>
+                    <td>{{ $articleMeta[$r->article_id]['sub_category'] ?? '-' }}</td>
                     <td>{{ $labels[$r->label_id] ?? '-' }}</td>
                     <td>
                         @if ($r->article_status == 1)
@@ -101,12 +112,15 @@
 
         // Batasi pilihan sub kategori sesuai kategori yang dipilih.
         function sync() {
-            var selected = $category.val();
+            // "Tanpa Kategori" tidak membatasi pilihan sub kategori.
+            var selected = $category.val() === 'none' ? '' : $category.val();
             var current = $sub.val();
-            var currentVisible = false;
+            // "Tanpa Sub Kategori" selalu tampil, jadi tidak ikut tersaring.
+            var currentVisible = current === 'none';
 
             $sub.find('option').each(function () {
-                if (!this.value) return;
+                // Lewati opsi kosong dan "Tanpa Sub Kategori" agar selalu tampil.
+                if (!this.value || this.value === 'none') return;
                 var match = !selected || this.dataset.category === selected;
                 this.hidden = !match;
                 this.disabled = !match;

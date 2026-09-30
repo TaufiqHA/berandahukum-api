@@ -6,11 +6,12 @@
     <form method="post" action="{{ $row ? site_admin('article/edit/'.$row->article_id) : site_admin('article/add') }}" enctype="multipart/form-data">
         @csrf
         <div class="form-group">
-            <label>Judul</label>
-            <input type="text" name="articleTitle" class="form-control @error('articleTitle') is-invalid @enderror" value="{{ old('articleTitle', $row->article_title ?? '') }}" required>
+            <label>Judul <span class="text-danger">*</span></label>
+            <input type="text" name="articleTitle" maxlength="100" class="form-control @error('articleTitle') is-invalid @enderror" value="{{ old('articleTitle', $row->article_title ?? '') }}" required>
             @error('articleTitle')
                 <div class="invalid-feedback d-block">{{ $message }}</div>
             @enderror
+            <small class="form-text text-muted">Wajib diisi, maksimal 100 karakter (dipakai juga sebagai URL artikel).</small>
         </div>
         <div class="row">
             <div class="col-md-4">
@@ -59,8 +60,8 @@
         <div class="row">
             <div class="col-md-4">
                 <div class="form-group">
-                    <label>Penulis</label>
-                    <input type="text" name="articleAuthor" class="form-control @error('articleAuthor') is-invalid @enderror" value="{{ old('articleAuthor', $row->article_author ?? '') }}">
+                    <label>Penulis <span class="text-danger">*</span></label>
+                    <input type="text" name="articleAuthor" maxlength="100" class="form-control @error('articleAuthor') is-invalid @enderror" value="{{ old('articleAuthor', $row->article_author ?? '') }}" required>
                     @error('articleAuthor')
                         <div class="invalid-feedback d-block">{{ $message }}</div>
                     @enderror
