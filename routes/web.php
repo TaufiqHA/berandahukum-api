@@ -10,7 +10,6 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\KomentarController;
 use App\Http\Controllers\Admin\LabelController;
 use App\Http\Controllers\Admin\LayoutController;
-use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\PertanyaanController as AdminPertanyaanController;
 use App\Http\Controllers\Admin\PilihanController;
 use App\Http\Controllers\Admin\PopupController;
@@ -178,15 +177,6 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
         Route::get('layout', [LayoutController::class, 'index']);
         Route::post('layout', [LayoutController::class, 'save']);
-
-        Route::get('menu', [MenuController::class, 'index']);
-        Route::get('menu/add', [MenuController::class, 'create']);
-        Route::post('menu/add', [MenuController::class, 'store']);
-        Route::get('menu/edit/{id}', [MenuController::class, 'edit']);
-        Route::post('menu/edit/{id}', [MenuController::class, 'update']);
-        Route::get('menu/delete/{id}', [MenuController::class, 'destroy']);
-        Route::post('menu/getdatamenu', [MenuController::class, 'getdatamenu']);
-        Route::post('menu/getartikel', [MenuController::class, 'getartikel']);
 
         Route::get('pilihan', [PilihanController::class, 'index']);
         Route::get('pilihan/add', [PilihanController::class, 'create']);

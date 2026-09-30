@@ -12,10 +12,35 @@
         @csrf
         <div class="form-group">
             <label>Posisi (1-35)</label>
-            <input type="number" name="adsPosition" class="form-control @error('adsPosition') is-invalid @enderror" value="{{ old('adsPosition', $row->ads_position ?? '') }}" required>
+            <input type="number" name="adsPosition" id="adsPosition" min="1" max="35" list="adsPositionList" class="form-control @error('adsPosition') is-invalid @enderror" value="{{ old('adsPosition', $row->ads_position ?? '') }}" required>
+            <datalist id="adsPositionList">
+                @foreach (($positions ?? []) as $pos => $keterangan)
+                    <option value="{{ $pos }}">{{ $keterangan }}</option>
+                @endforeach
+            </datalist>
+            <small class="form-text text-muted" id="adsPositionInfo">Nomor posisi menentukan letak iklan. Lihat daftar keterangan di bawah.</small>
             @error('adsPosition')
                 <div class="invalid-feedback d-block">{{ $message }}</div>
             @enderror
+
+            <details class="mt-2">
+                <summary style="cursor:pointer;">Daftar keterangan posisi</summary>
+                <div class="table-responsive mt-2">
+                    <table class="table table-sm table-bordered mb-0">
+                        <thead>
+                            <tr><th style="width:70px;">Posisi</th><th>Letak Iklan</th></tr>
+                        </thead>
+                        <tbody>
+                            @foreach (($positions ?? []) as $pos => $keterangan)
+                                <tr @class(['table-warning' => str_starts_with($keterangan, 'Tidak digunakan')])>
+                                    <td class="text-center">{{ $pos }}</td>
+                                    <td>{{ $keterangan }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </details>
         </div>
         <div class="form-group">
             <label>Tipe Iklan</label>
@@ -118,6 +143,25 @@
     typeSel.addEventListener('change', toggle);
     fileSel.addEventListener('change', toggle);
     toggle();
+})();
+</script>
+<script>
+(function () {
+    var input = document.getElementById('adsPosition');
+    var info = document.getElementById('adsPositionInfo');
+    if (!input || !info) return;
+
+    var positions = @json($positions ?? []);
+    var hint = 'Nomor posisi menentukan letak iklan. Lihat daftar keterangan di bawah.';
+
+    function update() {
+        var label = positions[input.value];
+        info.textContent = label ? 'Posisi ' + input.value + ' — ' + label : hint;
+    }
+
+    input.addEventListener('input', update);
+    input.addEventListener('change', update);
+    update();
 })();
 </script>
 @endsection

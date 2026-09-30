@@ -216,20 +216,12 @@
 				$('#btn-panel').addClass('bg-black');
 				$('#btn-panel').addClass('fr');
 				$('#btn-panel').html('<span class="fa fa-close"></span>');
-				if($('#menu_len').val() > 75 && $('#menu_len').val() < 99){
-					$('#space_top').removeClass('top-gap-40');
-					$('#space_top').addClass('top-gap-85');
-				}
 			}else{
 				$('#input-area').hide("fast");
 				$('#search-input').removeClass('search-show');
 				$('#btn-panel').removeClass('bg-black');
 				$('#btn-panel').removeClass('fr');
 				$('#btn-panel').html('<span class="fa fa-search"></span>');
-				if($('#menu_len').val() > 75 && $('#menu_len').val() < 99){
-					$('#space_top').removeClass('top-gap-85');
-					$('#space_top').addClass('top-gap-40');
-				}
 			}
 			
 		});

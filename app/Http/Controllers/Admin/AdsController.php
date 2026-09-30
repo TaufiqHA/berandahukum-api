@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Ads;
+use App\Services\AdPositions;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -25,12 +26,20 @@ class AdsController extends Controller
 
     public function create()
     {
-        return view('admin.ads.form', ['title' => 'Tambah Iklan', 'row' => null]);
+        return view('admin.ads.form', [
+            'title' => 'Tambah Iklan',
+            'row' => null,
+            'positions' => AdPositions::web(),
+        ]);
     }
 
     public function edit($id)
     {
-        return view('admin.ads.form', ['title' => 'Ubah Iklan', 'row' => $this->webAds()->where('ads_id', '=', $this->decrypt($id))->firstOrFail()]);
+        return view('admin.ads.form', [
+            'title' => 'Ubah Iklan',
+            'row' => $this->webAds()->where('ads_id', '=', $this->decrypt($id))->firstOrFail(),
+            'positions' => AdPositions::web(),
+        ]);
     }
 
     public function store(Request $request)

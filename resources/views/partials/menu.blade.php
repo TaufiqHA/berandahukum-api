@@ -5,11 +5,7 @@
                 <img src="{{ base_url('berandahukum.svg') }}" alt="Beranda Hukum — Media Belajar Hukum">
             </a>
 
-            <nav class="nav" id="primary-nav" aria-label="Menu utama">
-                @foreach ($frontMenuLinks as $item)
-                    <a href="{{ $item['url'] }}" class="{{ $item['active'] ? 'is-active' : '' }}">{{ $item['title'] }}</a>
-                @endforeach
-            </nav>
+            <nav class="nav" id="primary-nav" aria-label="Menu utama"></nav>
 
             <form class="search" action="{{ site_url('search') }}" role="search">
                 <label class="visually-hidden" for="q">Cari artikel</label>

@@ -8,7 +8,6 @@ use App\Models\Article;
 use App\Models\Category;
 use App\Models\Comment;
 use App\Models\Label;
-use App\Models\Menu;
 use App\Models\Quote;
 use App\Models\Setting;
 use App\Models\SubCategory;
@@ -159,61 +158,6 @@ class FrontService
     public function footerSosial(): array
     {
         return Setting::where('tipe', 'sosial')->orderBy('urutan')->get()->toArray();
-    }
-
-    public function menuTop(): array
-    {
-        $links = [];
-        $totalLen = 0;
-
-        foreach (Menu::orderBy('urutan')->get() as $mn) {
-            $row = null;
-            $title = null;
-            $url = '#';
-
-            switch ($mn->tipe) {
-                case 'artikel':
-                    $row = Article::find($mn->id_menu);
-                    $title = $row?->article_title;
-                    $url = site_url('a/'.$mn->uri_menu);
-                    break;
-                case 'label':
-                    $row = Label::find($mn->id_menu);
-                    $title = $row?->label_name;
-                    if ($row && $row->label_show === 'yes') {
-                        $url = site_url('l/'.$mn->uri_menu);
-                    } else {
-                        $url = 'hide';
-                    }
-                    break;
-                case 'kategori':
-                    $row = Category::find($mn->id_menu);
-                    $title = $row?->category_name;
-                    if ($row && $row->category_show === 'yes') {
-                        $url = site_url('k/'.$mn->uri_menu);
-                    } else {
-                        $url = 'hide';
-                    }
-                    break;
-                case 'subkategori':
-                    $row = SubCategory::find($mn->id_menu);
-                    $title = $row?->sub_category_name;
-                    if ($row && $row->sub_category_show === 'yes') {
-                        $url = site_url('s/'.$mn->uri_menu);
-                    } else {
-                        $url = 'hide';
-                    }
-                    break;
-            }
-
-            if ($row && $title !== null && $url !== 'hide') {
-                $active = request()->segment(2) === $mn->uri_menu;
-                $links[] = ['title' => $title, 'url' => $url, 'active' => $active];
-                $totalLen += strlen($title);
-            }
-        }
-
-        return [$links, $totalLen];
     }
 
     public function articlePilihan(string $posisi): array

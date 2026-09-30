@@ -14,14 +14,10 @@ use Illuminate\Support\Facades\View;
  */
 class ShareFrontData
 {
-    public function __construct(private FrontService $front)
-    {
-    }
+    public function __construct(private FrontService $front) {}
 
     public function handle(Request $request, Closure $next)
     {
-        [$menuLinks, $menuLen] = $this->front->menuTop();
-
         $categories = $this->front->categories();
         $tree = [];
         foreach ($categories as $c) {
@@ -44,9 +40,6 @@ class ShareFrontData
         $popupView = $tipe === '0' ? 'pop_upload' : ($tipe === '1' ? 'pop_embed' : 'pop_html');
 
         View::share([
-            'frontMenuLinks' => $menuLinks,
-            'frontMenuLen' => $menuLen,
-            'frontClassTop' => $menuLen > 98 ? 'top-gap-85' : 'top-gap-40',
             'frontSide' => $tree,
             'frontCategoriesTree' => $tree,
             'frontFooterInfo' => $this->front->footerInfo(),

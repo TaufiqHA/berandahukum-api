@@ -71,9 +71,6 @@
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav" style="flex-direction:row;flex-wrap:wrap;">
                 <a style="font-weight: 600;" class="nav-item nav-link {{ request()->segment(2) === null ? 'active' : '' }}" href="{{ site_url() }}"><span class="fa fa-home"></span> Home</a>
-                @foreach ($frontMenuLinks as $item)
-                    <a href="{{ $item['url'] }}" class="nav-item nav-link{{ $item['active'] ? ' active' : '' }}">{{ $item['title'] }}</a>
-                @endforeach
             </div>
 
             <form class="form-inline ml-auto" autocomplete="off" action="{{ site_url('search') }}">
@@ -85,7 +82,6 @@
                 </div>
                 <button type="button" id="btn-panel" class="btn btn-search"><span class="fa fa-search"></span></button>
             </form>
-            <input type="hidden" id="menu_len" value="{{ $frontMenuLen }}" />
             
         </div>
 	</div>	
