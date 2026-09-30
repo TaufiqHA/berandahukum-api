@@ -33,9 +33,15 @@
 
         <div class="main">
             <article class="article">
-                @if (!empty($article['article_img']) && is_file(public_path('uploads/img/'.$article['article_img'])))
+                @php
+                    $articleImg = $article['article_img'] ?? '';
+                    $hasArticleImage = ! empty($articleImg)
+                        && ! in_array($articleImg, ['beranda-hukum.jpg', 'beranda_hukum_square.png'], true)
+                        && is_file(public_path('uploads/img/'.$articleImg));
+                @endphp
+                @if ($hasArticleImage)
                     <figure class="article__figure">
-                        <img src="{{ url('uploads/img/'.$article['article_img']) }}" alt="{{ $article['article_title'] }}">
+                        <img src="{{ url('uploads/img/'.$articleImg) }}" alt="{{ $article['article_title'] }}">
                     </figure>
                 @endif
 
@@ -74,11 +80,11 @@
                     <div class="grid-3">
                         @foreach ($related_post as $a)
                             <article class="card">
-                                <a class="card__media" href="{{ site_url('a/'.$a['article_uri']) }}">
-                                    <img src="{{ article_image($a['article_img'] ?? null) }}" alt="{{ $a['article_title'] }}" loading="lazy">
-                                </a>
                                 <div class="card__body">
                                     <h3 class="card__title" style="font-size:.95rem;"><a href="{{ site_url('a/'.$a['article_uri']) }}">{{ $a['article_title'] }}</a></h3>
+                                    <div class="card__meta">
+                                        <time datetime="{{ $a['article_date'] ?? '' }}">{{ format_tanggal($a['article_date'] ?? '', 'in') }}</time>
+                                    </div>
                                 </div>
                             </article>
                         @endforeach
