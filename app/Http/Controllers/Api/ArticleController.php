@@ -50,12 +50,12 @@ class ArticleController extends BaseApiController
 
     public function show(string $uri)
     {
-        DB::table('tbl_article')->where('article_uri', $uri)->increment('article_views');
-
-        $article = Article::where('article_status', 1)->where('article_uri', $uri)->first();
+        $article = Article::findByUri($uri);
         if (! $article) {
             return response()->json(['message' => 'Artikel tidak ditemukan'], 404);
         }
+
+        DB::table('tbl_article')->where('article_id', $article->article_id)->increment('article_views');
 
         return response()->json($this->articleDetail($article->toArray()));
     }

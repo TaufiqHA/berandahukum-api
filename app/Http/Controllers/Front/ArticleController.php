@@ -20,12 +20,12 @@ class ArticleController extends Controller
 
     public function detail(string $uri)
     {
-        DB::table('tbl_article')->where('article_uri', $uri)->increment('article_views');
-
-        $article = Article::where('article_status', 1)->where('article_uri', $uri)->first();
+        $article = Article::findByUri($uri);
         if (! $article) {
             abort(404);
         }
+
+        DB::table('tbl_article')->where('article_id', $article->article_id)->increment('article_views');
 
         $a = $article->toArray();
         $authorName = optional(User::find($a['article_created_by']))->user_name ?? 'Admin';
