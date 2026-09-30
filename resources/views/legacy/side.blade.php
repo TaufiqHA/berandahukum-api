@@ -1,10 +1,10 @@
 <div class="row">
     <div class="col-md-12">
         <div id="side-menu">
-            @foreach ([8, 9, 10, 16, 17, 18, 19, 20] as $pos)
+            @foreach ([8, 17, 18, 19, 20] as $pos)
                 @php
-                    $nama = [8 => 'delapan', 9 => 'sembilan', 10 => 'sepuluh', 16 => '16', 17 => '17', 18 => '18', 19 => '19', 20 => '20'][$pos];
-                    $embedHeight = in_array($pos, [9, 10, 16, 17, 18, 19, 20], true) ? '50px' : '';
+                    $nama = [8 => 'delapan', 17 => '17', 18 => '18', 19 => '19', 20 => '20'][$pos];
+                    $embedHeight = in_array($pos, [17, 18, 19, 20], true) ? '50px' : '';
                 @endphp
                 @include('legacy.ad', [
                     'ad' => $frontService->getArticleById($pos),

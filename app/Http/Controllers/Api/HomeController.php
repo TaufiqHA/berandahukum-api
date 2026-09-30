@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Models\Label;
 use App\Models\SubCategory;
 use App\Models\SysSetting;
+use App\Services\AdPositions;
 
 class HomeController extends BaseApiController
 {
@@ -53,13 +54,20 @@ class HomeController extends BaseApiController
             'count' => Article::where('label_id', $l->label_id)->count(),
         ])->all();
 
-        // Banner/iklan gambar (mengikuti penempatan pada situs mobile).
-        // Posisi 8 (Google Play) dikecualikan khusus untuk aplikasi.
-        $ad = fn ($pos) => $this->adImage(
-            Ads::where('ads_position', $pos)->where('ads_status', '1')
-                ->where('ads_type', 0)->where('ads_file_type', 0)->first()
-        );
-        $banners = collect([9, 10, 16, 17, 18, 19, 20])
+        // Banner/iklan gambar. Hanya posisi web berketerangan "DM" (website +
+        // aplikasi) yang dikirim ke aplikasi: posisi 2 (banner atas), 19–20
+        // (tile), dan 22 (bawah). Posisi "D" hanya tampil di situs web.
+        $ad = function ($pos) {
+            if (! in_array($pos, AdPositions::mobileApp(), true)) {
+                return null;
+            }
+
+            return $this->adImage(
+                Ads::where('ads_position', $pos)->where('ads_status', '1')
+                    ->where('ads_type', 0)->where('ads_file_type', 0)->first()
+            );
+        };
+        $banners = collect([19, 20])
             ->map(fn ($p) => $ad($p))->filter()->values()->all();
 
         // Iklan antar-kategori (khusus aplikasi mobile, posisi 100). Mendukung
@@ -97,12 +105,11 @@ class HomeController extends BaseApiController
             'categories' => $categories,
             'labels' => $labels,
             'ads_top' => $ad(2),
-            'ads_middle' => $ad(12),
             'banners' => $banners,
             'ads_kategori' => $adsKategori,
             'ads_atas' => $adsAtas,
             'ads_bawah' => $adsBawah,
-            'ads_bottom' => $ad(7),
+            'ads_bottom' => $ad(22),
             'show_pertanyaan' => ($sys->show_pertanyaan ?? '1') === '1',
             'show_youtube' => ($sys->show_youtube ?? '1') === '1',
         ]);

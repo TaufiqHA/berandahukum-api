@@ -4,7 +4,7 @@
 
 <main id="content" class="page">
 @php
-    $promos = collect([8, 9, 10, 16, 17, 18, 19, 20])
+    $promos = collect([8, 17, 18, 19, 20])
         ->map(fn ($p) => $frontService->getArticleById($p))
         ->filter()
         ->values();
@@ -33,12 +33,6 @@
             @case('iklan_atas')
                 <div class="wrap home-extra">
                     @include('partials.ad', ['ad' => $frontService->getArticleById(2)])
-                </div>
-                @break
-
-            @case('hash')
-                <div class="wrap home__hash">
-                    @include('partials.ad', ['ad' => $frontService->getArticleById(12)])
                 </div>
                 @break
 
@@ -235,10 +229,8 @@
                 @endif
                 <div class="home-extra">
                     @include('partials.ad', ['ad' => $frontService->getArticleById(7)])
-                    @include('partials.ad', ['ad' => $frontService->getArticleById(14)])
                     @include('partials.ad', ['ad' => $frontService->getArticleById(21)])
                     @include('partials.ad', ['ad' => $frontService->getArticleById(22)])
-                    @include('partials.ad', ['ad' => $frontService->getArticleById(23)])
                 </div>
                 @break
 

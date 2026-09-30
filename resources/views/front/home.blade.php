@@ -324,15 +324,6 @@
 	 						
 </script>
 <!--END ARTIKEL PILIHAN -->
-<hr>
-<div class="row">
-    <div class="col-md-6">
-        @include('legacy.ad', ['ad' => $frontService->getArticleById(3), 'imgClass' => 'image-iklan-empat', 'idShow' => 'show_iklan_tiga', 'addHttp' => true])
-    </div>
-    <div class="col-md-6">
-        @include('legacy.ad', ['ad' => $frontService->getArticleById(4), 'imgClass' => 'image-iklan-empat', 'idShow' => 'show_iklan_empat', 'addHttp' => true])
-    </div>
-</div>
 <hr class="d-none d-lg-flex">
 <div class="row d-none d-lg-flex">
     @foreach ($articleDesktop as $a)
@@ -358,12 +349,6 @@
     </div>
     <div class="col-md-6">
         @include('legacy.ad', ['ad' => $frontService->getArticleById(6), 'imgClass' => 'image-iklan-empat', 'idShow' => 'show_iklan_enam', 'addHttp' => true])
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-md-12">
-        @include('legacy.ad', ['ad' => $frontService->getArticleById(14), 'imgClass' => 'image-iklan-tujuh', 'idShow' => 'show_iklan_empatbelas', 'addHttp' => true])
     </div>
 </div>
 
@@ -547,8 +532,6 @@
 @include('legacy.ad', ['ad' => $frontService->getArticleById(21), 'imgClass' => 'image-iklan-21', 'idShow' => 'show_iklan_21'])
 
 @include('legacy.ad', ['ad' => $frontService->getArticleById(22), 'imgClass' => 'image-iklan-22', 'idShow' => 'show_iklan_22'])
-
-@include('legacy.ad', ['ad' => $frontService->getArticleById(23), 'imgClass' => 'image-iklan-23', 'idShow' => 'show_iklan_23'])
 
 @if (($frontSys['show_youtube'] ?? 'no') === 'yes')
 <style>

@@ -11,7 +11,7 @@
     <form method="post" action="{{ $row ? site_admin('ads/edit/'.md5($row->ads_id)) : site_admin('ads/add') }}" enctype="multipart/form-data">
         @csrf
         <div class="form-group">
-            <label>Posisi (1-23)</label>
+            <label>Posisi</label>
             <input type="number" name="adsPosition" id="adsPosition" min="1" max="23" list="adsPositionList" class="form-control @error('adsPosition') is-invalid @enderror" value="{{ old('adsPosition', $row->ads_position ?? '') }}" required>
             <datalist id="adsPositionList">
                 @foreach (($positions ?? []) as $pos => $keterangan)

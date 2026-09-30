@@ -1,6 +1,6 @@
 {{--
     Sidebar halaman non-beranda — dibuat sama persis dengan sidebar beranda
-    (resources/views/legacy/side.blade.php): iklan posisi 8,9,10,16–20, tombol
+    (resources/views/legacy/side.blade.php): iklan posisi 8,17,18,19,20, tombol
     "Kirim Pertanyaan", lalu akordeon kategori → sub-kategori → artikel.
 
     Berbeda dari beranda, halaman ini memakai layouts.front yang hanya memuat
@@ -9,10 +9,10 @@
 --}}
 <aside class="side">
     <div id="side-menu">
-        @foreach ([8, 9, 10, 16, 17, 18, 19, 20] as $pos)
+        @foreach ([8, 17, 18, 19, 20] as $pos)
             @php
-                $nama = [8 => 'delapan', 9 => 'sembilan', 10 => 'sepuluh', 16 => '16', 17 => '17', 18 => '18', 19 => '19', 20 => '20'][$pos];
-                $embedHeight = in_array($pos, [9, 10, 16, 17, 18, 19, 20], true) ? '50px' : '';
+                $nama = [8 => 'delapan', 17 => '17', 18 => '18', 19 => '19', 20 => '20'][$pos];
+                $embedHeight = in_array($pos, [17, 18, 19, 20], true) ? '50px' : '';
             @endphp
             @include('legacy.ad', [
                 'ad' => $frontService->getArticleById($pos),

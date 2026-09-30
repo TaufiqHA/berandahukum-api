@@ -25,7 +25,6 @@ class HomeLayout
             'banner_atas' => ['label' => 'Banner Atas', 'scope' => 'mobile'],
             'slider' => ['label' => 'Carousel Sorotan', 'scope' => 'both'],
             'iklan_atas' => ['label' => 'Iklan Atas', 'scope' => 'desktop'],
-            'hash' => ['label' => 'Pembatas # + Iklan', 'scope' => 'mobile'],
             'terbaru' => ['label' => 'Terbaru', 'scope' => 'desktop'],
             'tiles' => ['label' => 'Tile Banner / Buku & Layanan', 'scope' => 'both'],
             'categories' => ['label' => 'Kartu Kategori', 'scope' => 'both'],

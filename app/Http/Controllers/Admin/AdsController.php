@@ -76,7 +76,7 @@ class AdsController extends Controller
         $isUpload = $request->input('adsType') === '0';
 
         $rules = [
-            'adsPosition' => ['required', 'integer', 'min:1', 'max:23'],
+            'adsPosition' => ['required', 'integer', Rule::in(array_keys(AdPositions::web()))],
             'adsType' => ['required', Rule::in(['0', '1'])],
             // Iklan unggahan (Gambar Upload) hanya boleh bertipe file Gambar.
             'adsFileType' => ['required', Rule::in($isUpload ? ['0'] : ['0', '1', '2'])],
@@ -96,8 +96,7 @@ class AdsController extends Controller
         $messages = [
             'adsPosition.required' => 'Posisi iklan wajib diisi.',
             'adsPosition.integer' => 'Posisi iklan harus berupa angka.',
-            'adsPosition.min' => 'Posisi iklan minimal 1.',
-            'adsPosition.max' => 'Posisi iklan maksimal 23.',
+            'adsPosition.in' => 'Posisi iklan tidak tersedia. Pilih nomor dari daftar keterangan posisi.',
             'adsType.required' => 'Tipe iklan wajib dipilih.',
             'adsType.in' => 'Tipe iklan yang dipilih tidak valid.',
             'adsFileType.required' => 'Tipe file wajib dipilih.',

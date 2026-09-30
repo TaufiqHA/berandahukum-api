@@ -65,10 +65,9 @@ visual tetap Modern Magazine):
 - **Urutan beranda mobile** (`.home` jadi flex kolom, blok diberi `order`):
   1. **Banner atas** — iklan posisi 2 (di desktop tampil sesudah carousel).
   2. **Carousel** (`partials.slider_atas`) dengan bar caption menempel di bawah.
-  3. **Iklan** di bawah carousel (`.home__hash`).
-  4. **Tile banner** — posisi 8–20, satu kolom (`.home__tiles`).
-  5. **Kartu kategori** (`.home__cats`) dari `partials.category_cards`.
-  6. **Iklan** sebelum footer (`.home__foot-ad`).
+  3. **Tile banner** — posisi 8, 17–20, satu kolom (`.home__tiles`).
+  4. **Kartu kategori** (`.home__cats`) dari `partials.category_cards`.
+  5. **Iklan** sebelum footer (`.home__foot-ad`, posisi 7).
   Section majalah lain ditandai `.home-extra` dan disembunyikan di mobile.
   `.home > * { min-width: 0 }` + `overflow-x: hidden` mencegah `.wrap` memuai
   mengikuti lebar trek slider (yang membuat gambar carousel terpotong).

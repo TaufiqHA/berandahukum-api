@@ -36,15 +36,6 @@
                                 <a href="{{ site_url('rss') }}" target="blank"><span class="fa fa-rss fa-2x"></span> RSS </a>
                             </div>
                             
-                            @php $iklan_limabelas = $frontService->getArticleById(15); @endphp
-                            @if (! empty($iklan_limabelas))
-                                @include('legacy.ad', [
-                                    'ad' => $iklan_limabelas,
-                                    'imgClass' => 'img-fluid',
-                                    'idShow' => 'show_iklan_delapan',
-                                ])
-                            @endif
-                            
                             
                         </div>
                     </div>

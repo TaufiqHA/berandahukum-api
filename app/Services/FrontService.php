@@ -46,7 +46,7 @@ class FrontService
 
     public function adsHome(): array
     {
-        return Ads::where('ads_status', '1')->whereIn('ads_position', [1, 2, 3, 4, 5, 6, 7])
+        return Ads::where('ads_status', '1')->whereIn('ads_position', [1, 2, 5, 6, 7])
             ->get()->toArray();
     }
 

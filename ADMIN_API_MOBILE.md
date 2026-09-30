@@ -161,13 +161,15 @@ mengembalikan komponen yang sama dengan situs mobile:
 | Field | Isi |
 |-------|-----|
 | `ads_top` | Banner iklan atas (`{image, link}` atau `null`) — iklan posisi 2 |
-| `ads_middle` | Banner setelah pembatas `#` — iklan posisi 12 |
-| `banners` | Tile banner (posisi 9–20; posisi 8/Google Play **dikecualikan** untuk app), tiap item `{image, link}` |
-| `ads_bottom` | Iklan sebelum footer (posisi 7) |
+| `banners` | Tile banner (posisi 19–20), tiap item `{image, link}` |
+| `ads_bottom` | Iklan sebelum footer (posisi 22) |
 | `ads_kategori` / `ads_atas` / `ads_bawah` | Iklan mobile: `{type,image,link,category_id}` (gambar) atau `{type:"admob",admob_unit,category_id}` |
 | `categories[].subs` | Sub-kategori untuk kartu accordion |
 
-Catatan: setiap item iklan punya `type` bernilai `image` atau `admob`.
+Catatan: aplikasi hanya menerima iklan posisi web berketerangan **DM** (desktop
++ aplikasi), yaitu posisi 2, 19, 20, dan 22. Posisi berketerangan **D** hanya
+tampil di situs web. Selain itu aplikasi memakai posisi khusus 100–103.
+Setiap item iklan punya `type` bernilai `image` atau `admob`.
 Iklan gambar (`ads_type=0` & `ads_file_type=0`) mengirim `{image, link}`;
 iklan AdMob native mengirim `{admob_unit}`. Skrip/embed web tetap diabaikan.
 URL gambar relatif (`uploads/i/...`).

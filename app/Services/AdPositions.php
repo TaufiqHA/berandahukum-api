@@ -6,8 +6,12 @@ namespace App\Services;
  * Keterangan penempatan iklan (kolom tbl_ads.ads_position).
  *
  * Posisi 1–23 dipakai halaman situs web, sedangkan posisi 100–103 khusus
- * aplikasi mobile (dikelola dari panel mobile). Peta ini dipakai panel admin
- * web agar pengelola tahu tiap nomor posisi tampil di bagian mana.
+ * aplikasi mobile (dikelola dari panel mobile). Sebagian nomor posisi web sudah
+ * dihapus karena slotnya tidak dipakai lagi — hanya nomor pada web() yang aktif.
+ *
+ * Keterangan platform: "D" = desktop (situs web), "DM" = desktop + aplikasi
+ * mobile. Peta ini dipakai panel admin web agar pengelola tahu tiap nomor
+ * posisi tampil di bagian mana.
  */
 class AdPositions
 {
@@ -19,30 +23,29 @@ class AdPositions
     public static function web(): array
     {
         return [
-            1 => 'Menu atas — di bawah logo, tampil di semua halaman',
-            2 => 'Beranda — banner atas, tepat di bawah menu (juga banner atas mobile)',
-            3 => 'Beranda — kolom kiri, di bawah artikel pilihan',
-            4 => 'Beranda — kolom kanan, sejajar posisi 3',
-            5 => 'Beranda — kolom kiri, setelah berita utama',
-            6 => 'Beranda — kolom kanan, sejajar posisi 5',
-            7 => 'Beranda — bawah, setelah bagian Quote (juga iklan bawah mobile)',
-            8 => 'Sidebar & tile beranda — iklan 1',
-            9 => 'Sidebar & tile beranda — iklan 2',
-            10 => 'Sidebar & tile beranda — iklan 3',
-            11 => 'Tidak digunakan',
-            12 => 'Beranda — pembatas "#" (mobile)',
-            13 => 'Tidak digunakan',
-            14 => 'Beranda — bawah, baris penuh setelah posisi 5–6',
-            15 => 'Footer — kolom Follow Us',
-            16 => 'Sidebar & tile beranda — iklan 4',
-            17 => 'Sidebar & tile beranda — iklan 5',
-            18 => 'Sidebar & tile beranda — iklan 6',
-            19 => 'Sidebar & tile beranda — iklan 7',
-            20 => 'Sidebar & tile beranda — iklan 8',
-            21 => 'Beranda — bawah, setelah posisi 7',
-            22 => 'Beranda — bawah, setelah posisi 21',
-            23 => 'Beranda — bawah, setelah posisi 22',
+            1 => 'Menu atas — di bawah logo, tampil di semua halaman (D: website)',
+            2 => 'Beranda — banner atas, tepat di bawah menu (DM: website + aplikasi)',
+            5 => 'Beranda — kolom kiri, setelah berita utama (D: website)',
+            6 => 'Beranda — kolom kanan, sejajar posisi 5 (D: website)',
+            7 => 'Beranda — bawah, setelah bagian Quote (D: website)',
+            8 => 'Sidebar & tile beranda — iklan 1 (D: website)',
+            17 => 'Sidebar & tile beranda — iklan 5 (D: website)',
+            18 => 'Sidebar & tile beranda — iklan 6 (D: website)',
+            19 => 'Sidebar & tile beranda — iklan 7 (DM: website + aplikasi)',
+            20 => 'Sidebar & tile beranda — iklan 8 (DM: website + aplikasi)',
+            21 => 'Beranda — bawah, setelah posisi 7 (D: website)',
+            22 => 'Beranda — bawah, setelah posisi 21 (DM: website + aplikasi)',
         ];
+    }
+
+    /**
+     * Posisi web yang juga dikirim ke aplikasi mobile (keterangan "DM").
+     *
+     * @return array<int, int>
+     */
+    public static function mobileApp(): array
+    {
+        return [2, 19, 20, 22];
     }
 
     /**
