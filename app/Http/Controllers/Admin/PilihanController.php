@@ -25,12 +25,24 @@ class PilihanController extends Controller
 
     public function create()
     {
-        return view('admin.pilihan.form', ['title' => 'Tambah Artikel Pilihan', 'row' => null, 'categories' => Category::orderBy('urutan')->get()]);
+        return view('admin.pilihan.form', [
+            'title' => 'Tambah Artikel Pilihan',
+            'row' => null,
+            'articleTitle' => null,
+            'categories' => Category::orderBy('urutan')->get(),
+        ]);
     }
 
     public function edit($id)
     {
-        return view('admin.pilihan.form', ['title' => 'Update Artikel Pilihan', 'row' => Pilihan::findOrFail($id), 'categories' => Category::orderBy('urutan')->get()]);
+        $row = Pilihan::findOrFail($id);
+
+        return view('admin.pilihan.form', [
+            'title' => 'Update Artikel Pilihan',
+            'row' => $row,
+            'articleTitle' => Article::find($row->article_id)->article_title ?? null,
+            'categories' => Category::orderBy('urutan')->get(),
+        ]);
     }
 
     public function store(Request $request)
@@ -70,6 +82,22 @@ class PilihanController extends Controller
     public function getsub(Request $request)
     {
         return response()->json(SubCategory::where('category_id', $request->input('id_cat'))->get());
+    }
+
+    /** AJAX untuk select2: cari artikel yang sudah terbit. */
+    public function articles(Request $request)
+    {
+        $q = trim((string) $request->input('q', ''));
+
+        $rows = Article::where('article_status', 1)
+            ->when($q !== '', fn ($x) => $x->where('article_title', 'like', '%'.$q.'%'))
+            ->orderByDesc('article_id')
+            ->limit(30)
+            ->get(['article_id', 'article_title']);
+
+        return response()->json([
+            'results' => $rows->map(fn ($a) => ['id' => $a->article_id, 'text' => $a->article_title])->all(),
+        ]);
     }
 
     private function payload(Request $request): array

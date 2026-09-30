@@ -196,6 +196,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
         Route::get('pilihan/delete/{id}', [PilihanController::class, 'destroy']);
         Route::post('pilihan/getartikel', [PilihanController::class, 'getartikel']);
         Route::post('pilihan/getsub', [PilihanController::class, 'getsub']);
+        Route::get('pilihan/articles', [PilihanController::class, 'articles']);
 
         // Slider / sorotan beranda (tbl_pilihan posisi "top")
         Route::get('slider', [SliderController::class, 'index']);
