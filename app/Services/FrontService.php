@@ -5,12 +5,10 @@ namespace App\Services;
 use App\Models\Ads;
 use App\Models\AdsPop;
 use App\Models\Article;
-use App\Models\ArticleCategory;
 use App\Models\Category;
 use App\Models\Comment;
 use App\Models\Label;
 use App\Models\Menu;
-use App\Models\Pilihan;
 use App\Models\Quote;
 use App\Models\Setting;
 use App\Models\SubCategory;
@@ -22,8 +20,18 @@ use App\Models\SysSetting;
  */
 class FrontService
 {
+    /**
+     * Posisi minimum iklan khusus aplikasi mobile. Iklan dengan posisi ini
+     * (100–103) tidak pernah ditampilkan pada halaman situs web.
+     */
+    private const MOBILE_MIN_POSITION = 100;
+
     public function ad(int $position): ?array
     {
+        if ($position >= self::MOBILE_MIN_POSITION) {
+            return null;
+        }
+
         $row = Ads::where('ads_position', $position)
             ->where('ads_status', '1')
             ->first();

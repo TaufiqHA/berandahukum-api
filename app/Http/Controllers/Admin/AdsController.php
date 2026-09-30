@@ -9,9 +9,18 @@ use Illuminate\Validation\Rule;
 
 class AdsController extends Controller
 {
+    /**
+     * Posisi minimum iklan khusus aplikasi mobile. Iklan pada posisi ini
+     * (100–103) dikelola dari panel mobile dan tidak ditampilkan di website.
+     */
+    private const MOBILE_MIN_POSITION = 100;
+
     public function index()
     {
-        return view('admin.ads.index', ['title' => 'Daftar Iklan', 'ads' => Ads::where('ads_status', '1')->orderByDesc('ads_id')->get()]);
+        return view('admin.ads.index', [
+            'title' => 'Daftar Iklan',
+            'ads' => $this->webAds()->where('ads_status', '1')->orderByDesc('ads_id')->get(),
+        ]);
     }
 
     public function create()
@@ -21,7 +30,7 @@ class AdsController extends Controller
 
     public function edit($id)
     {
-        return view('admin.ads.form', ['title' => 'Ubah Iklan', 'row' => Ads::where('ads_id', '=', $this->decrypt($id))->firstOrFail()]);
+        return view('admin.ads.form', ['title' => 'Ubah Iklan', 'row' => $this->webAds()->where('ads_id', '=', $this->decrypt($id))->firstOrFail()]);
     }
 
     public function store(Request $request)
@@ -33,7 +42,7 @@ class AdsController extends Controller
 
     public function update(Request $request, $id)
     {
-        $ads = Ads::findOrFail($this->decrypt($id));
+        $ads = $this->webAds()->findOrFail($this->decrypt($id));
         $ads->update($this->payload($request, $ads));
 
         return redirect(site_admin('ads'))->with('msg_flash', success_message('Data iklan berhasil disimpan.'));
@@ -41,10 +50,16 @@ class AdsController extends Controller
 
     public function destroy($id)
     {
-        $ads = Ads::findOrFail($this->decrypt($id));
+        $ads = $this->webAds()->findOrFail($this->decrypt($id));
         $ads->update(['ads_status' => '0']);
 
         return redirect(site_admin('ads'))->with('msg_flash', success_message('Iklan berhasil dihapus.'));
+    }
+
+    /** Dasar query iklan yang dikelola dari website: hanya posisi non-mobile. */
+    private function webAds()
+    {
+        return Ads::where('ads_position', '<', self::MOBILE_MIN_POSITION);
     }
 
     private function payload(Request $request, ?Ads $existing = null): array
