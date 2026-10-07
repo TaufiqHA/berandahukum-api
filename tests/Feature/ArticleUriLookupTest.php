@@ -51,6 +51,36 @@ class ArticleUriLookupTest extends TestCase
             ->assertJsonPath('id', $article->article_id);
     }
 
+    public function test_uri_yang_bertabrakan_beda_huruf_besar_kecil_tetap_terpisah(): void
+    {
+        // Data lama memakai Title Case, sedangkan artikel baru memakai slug
+        // lowercase. Keduanya harus tetap bisa dibuka lewat URL-nya sendiri dan
+        // tidak saling menimpa.
+        $lama = $this->publishedArticle('Bab-I-Ketentuan-Umum', 'Bab I - Ketentuan Umum');
+        $lama->update(['article_content' => '<p>Isi lama.</p>']);
+
+        $baru = $this->publishedArticle('bab-i-ketentuan-umum', 'BAB I Ketentuan Umum');
+        $baru->update(['article_content' => '<p>Isi baru.</p>']);
+
+        $this->getJson('/api/v1/articles/bab-i-ketentuan-umum')
+            ->assertOk()
+            ->assertJsonPath('id', $baru->article_id);
+
+        $this->getJson('/api/v1/articles/Bab-I-Ketentuan-Umum')
+            ->assertOk()
+            ->assertJsonPath('id', $lama->article_id);
+    }
+
+    public function test_uri_duplikat_mengembalikan_artikel_terbaru(): void
+    {
+        $this->publishedArticle('Perkara-Gugur', 'Perkara Gugur');
+        $terbaru = $this->publishedArticle('Perkara-Gugur', 'Perkara Gugur');
+
+        $this->getJson('/api/v1/articles/Perkara-Gugur')
+            ->assertOk()
+            ->assertJsonPath('id', $terbaru->article_id);
+    }
+
     public function test_uri_tidak_dikenal_mengembalikan_404(): void
     {
         $this->publishedArticle(
