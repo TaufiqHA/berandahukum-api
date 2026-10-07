@@ -101,14 +101,23 @@ class FrontService
             ->get()->toArray();
     }
 
-    /** Sub-kategori untuk side menu lama (urut create_date desc). */
+    /**
+     * Sub-kategori untuk side menu, diurutkan sama dengan pengaturan urutan di
+     * panel admin (tbl_sub_category.urutan, lalu sub_category_id).
+     */
     public function sideSubCategories(int $categoryId): array
     {
         return SubCategory::where('category_id', $categoryId)
-            ->orderByDesc('create_date')->get()->toArray();
+            ->orderBy('urutan')
+            ->orderBy('sub_category_id')
+            ->get()->toArray();
     }
 
-    /** Artikel per sub-kategori untuk side menu lama (urut create_date desc). */
+    /**
+     * Artikel per sub-kategori untuk side menu. Urutannya mengikuti pengaturan
+     * "Urut Artikel" di panel admin (tbl_article_category.urutan, lalu tanggal
+     * artikel), bukan lagi create_date.
+     */
     public function sideSubCategoryArticles(int $categoryId, int $subCategoryId): array
     {
         return Article::select('tbl_article.article_date', 'tbl_article.article_uri', 'tbl_article.article_title', 'tbl_article.article_content', 'tbl_article.article_created_date')
@@ -116,7 +125,8 @@ class FrontService
             ->where('tbl_article.article_status', '1')
             ->where('ac.category_id', $categoryId)
             ->where('ac.sub_category_id', $subCategoryId)
-            ->orderByDesc('tbl_article.create_date')
+            ->orderBy('ac.urutan')
+            ->orderByDesc('tbl_article.article_date')
             ->get()->toArray();
     }
 
