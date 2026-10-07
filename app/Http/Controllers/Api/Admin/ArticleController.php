@@ -219,7 +219,7 @@ class ArticleController extends AdminApiController
         return [
             'label_id' => (int) $request->input('label_id', 0),
             'headline_news' => $request->input('headline') ? 1 : 0,
-            'article_date' => $request->input('article_date') ?: date('Y-m-d H:i:s'),
+            'article_date' => $request->input('article_date') ?: ($existing?->article_date ?? date('Y-m-d H:i:s')),
             'article_uri' => urlencode(str_replace(' ', '-', strtolower($title))),
             'article_title' => $title,
             'article_content' => $request->input('content', ''),
@@ -230,7 +230,10 @@ class ArticleController extends AdminApiController
             'article_views' => $existing->article_views ?? 0,
             'article_created_by' => $existing->article_created_by ?? auth()->id(),
             'article_created_date' => $existing->article_created_date ?? date('Y-m-d H:i:s'),
-            'create_date' => $request->input('create_date') ?: date('Y-m-d'),
+            // Tanggal pembuatan tidak diubah saat update: pertahankan nilai lama
+            // bila klien tidak mengirim create_date (mis. panel mobile yang tidak
+            // memiliki field ini).
+            'create_date' => $request->input('create_date') ?: ($existing?->create_date ?? date('Y-m-d')),
         ];
     }
 

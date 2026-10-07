@@ -321,7 +321,7 @@ class ArticleController extends Controller
         return [
             'label_id' => (int) $request->input('labelId', 0),
             'headline_news' => $request->input('headline') == '1' ? 1 : 0,
-            'article_date' => $request->input('articleDate') ?: date('Y-m-d H:i:s'),
+            'article_date' => $request->input('articleDate') ?: ($existing->article_date ?? date('Y-m-d H:i:s')),
             'article_uri' => $uri,
             'article_title' => $title,
             // Kolom teks NOT NULL: kosong tetap disimpan sebagai string kosong,
@@ -334,7 +334,7 @@ class ArticleController extends Controller
             'article_created_by' => auth()->id() ?? 0,
             'article_views' => $existing->article_views ?? 0,
             'article_created_date' => $existing->article_created_date ?? date('Y-m-d H:i:s'),
-            'create_date' => $request->input('createDate') ?: date('Y-m-d'),
+            'create_date' => $request->input('createDate') ?: ($existing->create_date ?? date('Y-m-d')),
         ];
     }
 

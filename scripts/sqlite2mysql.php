@@ -90,7 +90,9 @@ $schemas = [
             'article_id' => 'int(11) NOT NULL AUTO_INCREMENT',
             'headline_news' => 'int(11) NOT NULL DEFAULT 0',
             'label_id' => 'int(11) NOT NULL DEFAULT 0',
-            'article_date' => 'timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()',
+            // Tanpa ON UPDATE: jangan biarkan MySQL menimpa tanggal artikel
+            // setiap kali baris di-update (mis. view count, publish/draft).
+            'article_date' => 'datetime NOT NULL DEFAULT current_timestamp()',
             'article_uri' => 'varchar(100) NOT NULL',
             'article_title' => 'varchar(100) NOT NULL',
             'article_author' => 'varchar(255) NOT NULL',
