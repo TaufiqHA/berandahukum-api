@@ -9,7 +9,16 @@ use Illuminate\Http\Request;
  * Iklan khusus aplikasi mobile (panel admin mobile), disimpan di tbl_ads:
  *   - 100: antar kategori beranda (bisa dipasangkan ke kategori tertentu)
  *   - 101: bawah beranda, antara banner tengah dan footer (maks. 3)
+ *   - 102: atas beranda, di bawah menu (maks. 2)
+ *   - 103: di atas artikel (maks. 2)
+ *   - 104: interstitial, tampil saat membuka artikel (maks. 1)
+ *   - 105: app open, tampil saat aplikasi dibuka (maks. 1)
+ *   - 106: reward, ditonton atas aksi pengguna (maks. 1)
  * Posisi ini tidak dipakai situs web.
+ *
+ * Kolom ads_kind menyimpan format:
+ *   0 = gambar, 1 = AdMob native, 2 = banner, 3 = interstitial,
+ *   4 = app open, 5 = reward.
  */
 class AdsController extends AdminApiController
 {
@@ -22,11 +31,20 @@ class AdsController extends AdminApiController
 
     private const POSISI_ATAS_ARTIKEL = 103;
 
+    private const POSISI_INTERSTITIAL = 104;
+
+    private const POSISI_APP_OPEN = 105;
+
+    private const POSISI_REWARD = 106;
+
     private const POSISI = [
         self::POSISI_ANTAR_KATEGORI,
         self::POSISI_BAWAH_BERANDA,
         self::POSISI_ATAS_BERANDA,
         self::POSISI_ATAS_ARTIKEL,
+        self::POSISI_INTERSTITIAL,
+        self::POSISI_APP_OPEN,
+        self::POSISI_REWARD,
     ];
 
     /** Batas jumlah iklan per posisi (null = tanpa batas). */
@@ -35,6 +53,39 @@ class AdsController extends AdminApiController
         self::POSISI_BAWAH_BERANDA => 3,
         self::POSISI_ATAS_BERANDA => 2,
         self::POSISI_ATAS_ARTIKEL => 2,
+        self::POSISI_INTERSTITIAL => 1,
+        self::POSISI_APP_OPEN => 1,
+        self::POSISI_REWARD => 1,
+    ];
+
+    /** Format yang diinput panel → nilai ads_kind. */
+    private const KIND_TO_ADS = [
+        'image' => 0,
+        'admob' => 1,
+        'admob_banner' => 2,
+        'admob_interstitial' => 3,
+        'admob_app_open' => 4,
+        'admob_reward' => 5,
+    ];
+
+    /** ads_kind → `type` yang dikirim ke aplikasi. */
+    private const TYPE_BY_ADS_KIND = [
+        0 => 'image',
+        1 => 'admob',
+        2 => 'admob_banner',
+        3 => 'admob_interstitial',
+        4 => 'admob_app_open',
+        5 => 'admob_reward',
+    ];
+
+    /**
+     * Format full-screen dipetakan ke posisi tetap (abaikan posisi dari form),
+     * karena letaknya hanya relevan lewat pemicu di aplikasi.
+     */
+    private const FULLSCREEN_POSITION = [
+        'admob_interstitial' => self::POSISI_INTERSTITIAL,
+        'admob_app_open' => self::POSISI_APP_OPEN,
+        'admob_reward' => self::POSISI_REWARD,
     ];
 
     public function index()
@@ -47,8 +98,8 @@ class AdsController extends AdminApiController
             ->get()
             ->map(fn ($a) => [
                 'id' => (int) $a->ads_id,
-                'type' => (int) $a->ads_kind === 1 ? 'admob' : 'image',
-                'image' => (int) $a->ads_kind === 1 ? null : $this->imageUrl((string) $a->ads_url),
+                'type' => self::TYPE_BY_ADS_KIND[(int) $a->ads_kind] ?? 'image',
+                'image' => (int) $a->ads_kind > 0 ? null : $this->imageUrl((string) $a->ads_url),
                 'admob_unit' => $a->ads_admob_unit ?: null,
                 'link' => $a->ads_link !== '' && $a->ads_link !== '#' ? $a->ads_link : null,
                 'position' => (int) $a->ads_position,
@@ -61,17 +112,20 @@ class AdsController extends AdminApiController
 
     public function store(Request $request)
     {
-        $kind = $request->input('kind') === 'admob' ? 'admob' : 'image';
+        $kind = $this->normalizeKind($request->input('kind'));
         $request->merge(['kind' => $kind]);
 
         $request->validate([
-            'kind' => 'required|in:image,admob',
+            'kind' => 'required|in:'.implode(',', array_keys(self::KIND_TO_ADS)),
             'position' => 'required|integer',
             'image' => 'required_if:kind,image|image',
-            'admob_unit' => 'required_if:kind,admob|nullable|string|max:191',
+            'admob_unit' => 'required_unless:kind,image|nullable|string|max:191',
         ]);
 
-        $position = (int) $request->input('position');
+        $adsKind = self::KIND_TO_ADS[$kind];
+        $isAdmob = $adsKind > 0;
+
+        $position = $this->positionFor($kind, $request);
         if (! in_array($position, self::POSISI, true)) {
             return $this->message('Penempatan iklan tidak dikenal.', 422);
         }
@@ -79,13 +133,11 @@ class AdsController extends AdminApiController
             return $this->message('Maksimal '.$this->maxFor($position).' iklan untuk penempatan ini.', 422);
         }
 
-        $isAdmob = $kind === 'admob';
-
         Ads::create([
             'ads_position' => $position,
             'ads_type' => 0,
             'ads_file_type' => 0,
-            'ads_kind' => $isAdmob ? 1 : 0,
+            'ads_kind' => $adsKind,
             'ads_admob_unit' => $isAdmob ? (string) $request->input('admob_unit') : null,
             'ads_url' => $isAdmob ? '' : (string) $this->storeUpload($request, 'image', 'ads', 'i'),
             'ads_link' => $isAdmob ? '' : (string) $request->input('link', ''),
@@ -139,41 +191,42 @@ class AdsController extends AdminApiController
     {
         $ads = Ads::whereIn('ads_position', self::POSISI)->findOrFail($id);
         $position = (int) $ads->ads_position;
-        $currentKind = (int) $ads->ads_kind === 1 ? 'admob' : 'image';
+        $currentKind = self::TYPE_BY_ADS_KIND[(int) $ads->ads_kind] ?? 'image';
+        $currentIsAdmob = (int) $ads->ads_kind > 0;
 
-        $kind = $request->input('kind') === 'admob' ? 'admob' : 'image';
+        $kind = $this->normalizeKind($request->input('kind', $currentKind));
         $request->merge(['kind' => $kind]);
+        $adsKind = self::KIND_TO_ADS[$kind];
+        $isAdmob = $adsKind > 0;
 
         $data = [];
 
-        // Penempatan boleh diubah dari form edit. Saat pindah penempatan,
-        // iklan ditempatkan di urutan terakhir kelompok barunya.
-        $newPosition = $position;
-        if ($request->filled('position')) {
-            $newPosition = (int) $request->input('position');
-            if (! in_array($newPosition, self::POSISI, true)) {
-                return $this->message('Penempatan iklan tidak dikenal.', 422);
+        // Penempatan boleh diubah dari form edit. Format full-screen dipetakan
+        // ke posisi tetap. Saat pindah penempatan, iklan ditempatkan di urutan
+        // terakhir kelompok barunya.
+        $newPosition = $this->positionFor($kind, $request, $position);
+        if (! in_array($newPosition, self::POSISI, true)) {
+            return $this->message('Penempatan iklan tidak dikenal.', 422);
+        }
+        if ($newPosition !== $position) {
+            $max = $this->maxFor($newPosition);
+            if ($max !== null
+                && Ads::where('ads_position', $newPosition)->where('ads_status', '1')->count() >= $max) {
+                return $this->message('Maksimal '.$max.' iklan untuk penempatan ini.', 422);
             }
-            if ($newPosition !== $position) {
-                $max = $this->maxFor($newPosition);
-                if ($max !== null
-                    && Ads::where('ads_position', $newPosition)->where('ads_status', '1')->count() >= $max) {
-                    return $this->message('Maksimal '.$max.' iklan untuk penempatan ini.', 422);
-                }
-                $data['ads_position'] = $newPosition;
-                $data['ads_urutan'] = $this->nextUrutan($newPosition);
-            }
+            $data['ads_position'] = $newPosition;
+            $data['ads_urutan'] = $this->nextUrutan($newPosition);
         }
 
-        if ($kind === 'admob') {
+        if ($isAdmob) {
             $request->validate(['admob_unit' => 'required|string|max:191']);
 
             // Beralih dari gambar ke AdMob: buang gambar lama.
-            if ($currentKind === 'image') {
+            if (! $currentIsAdmob) {
                 $this->removeFile((string) $ads->ads_url);
             }
 
-            $data['ads_kind'] = 1;
+            $data['ads_kind'] = $adsKind;
             $data['ads_admob_unit'] = (string) $request->input('admob_unit');
             $data['ads_url'] = '';
             $data['ads_link'] = '';
@@ -186,10 +239,10 @@ class AdsController extends AdminApiController
                 $request->validate(['image' => 'image']);
                 $old = (string) $ads->ads_url;
                 $data['ads_url'] = $this->storeUpload($request, 'image', 'ads', 'i');
-                if ($currentKind === 'image') {
+                if (! $currentIsAdmob) {
                     $this->removeFile($old);
                 }
-            } elseif ($currentKind === 'admob' || empty($ads->ads_url)) {
+            } elseif ($currentIsAdmob || empty($ads->ads_url)) {
                 // Beralih ke gambar tanpa mengunggah berkas baru tidak valid.
                 return $this->message('Gambar iklan wajib diunggah.', 422);
             }
@@ -221,6 +274,28 @@ class AdsController extends AdminApiController
     private function maxFor(int $position): ?int
     {
         return self::MAX_PER_POSISI[$position] ?? null;
+    }
+
+    /** Format yang diminta; jatuh ke 'image' bila tidak dikenal. */
+    private function normalizeKind(mixed $value): string
+    {
+        $kind = is_string($value) ? trim($value) : '';
+
+        return array_key_exists($kind, self::KIND_TO_ADS) ? $kind : 'image';
+    }
+
+    /** Format full-screen memakai posisi tetap; format lain mengikuti form. */
+    private function positionFor(string $kind, Request $request, ?int $fallback = null): int
+    {
+        if (isset(self::FULLSCREEN_POSITION[$kind])) {
+            return self::FULLSCREEN_POSITION[$kind];
+        }
+
+        if ($request->filled('position')) {
+            return (int) $request->input('position');
+        }
+
+        return $fallback ?? self::POSISI_ANTAR_KATEGORI;
     }
 
     /** Urutan berikutnya (di akhir) untuk sebuah penempatan. */

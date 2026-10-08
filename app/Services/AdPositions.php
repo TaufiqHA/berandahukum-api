@@ -60,6 +60,9 @@ class AdPositions
             101 => 'Mobile — bawah beranda, sebelum footer (maks. 3)',
             102 => 'Mobile — atas beranda, di bawah menu (maks. 2)',
             103 => 'Mobile — di atas artikel (maks. 2)',
+            104 => 'Mobile — interstitial (tampil saat membuka artikel)',
+            105 => 'Mobile — app open (tampil saat aplikasi dibuka)',
+            106 => 'Mobile — reward (ditonton pengguna)',
         ];
     }
 

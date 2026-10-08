@@ -94,6 +94,13 @@ class HomeController extends BaseApiController
             ->orderBy('ads_urutan')->orderBy('ads_id')
             ->get()->map(fn ($a) => $this->adMobile($a))->filter()->take(3)->values()->all();
 
+        // Iklan full-screen (tidak dirender di feed): interstitial, app open,
+        // dan reward. Masing-masing satu Ad Unit.
+        $adFull = fn (int $pos) => $this->adMobile(
+            Ads::where('ads_position', $pos)->where('ads_status', '1')
+                ->orderBy('ads_urutan')->orderBy('ads_id')->first()
+        );
+
         $sys = SysSetting::first();
 
         return response()->json([
@@ -110,6 +117,9 @@ class HomeController extends BaseApiController
             'ads_atas' => $adsAtas,
             'ads_bawah' => $adsBawah,
             'ads_bottom' => $ad(22),
+            'ads_interstitial' => $adFull(104),
+            'ads_app_open' => $adFull(105),
+            'ads_reward' => $adFull(106),
             'show_pertanyaan' => ($sys->show_pertanyaan ?? '1') === '1',
             'show_youtube' => ($sys->show_youtube ?? '1') === '1',
         ]);

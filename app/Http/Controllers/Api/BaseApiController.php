@@ -149,9 +149,22 @@ abstract class BaseApiController extends Controller
     }
 
     /**
-     * Ringkasan iklan untuk aplikasi mobile, mendukung dua jenis:
+     * Peta `ads_kind` (integer di tbl_ads) ke `type` yang dikirim ke aplikasi.
+     *   0 = gambar, 1 = AdMob native, 2 = banner, 3 = interstitial,
+     *   4 = app open, 5 = reward.
+     */
+    public const ADMOB_KINDS = [
+        1 => 'admob',
+        2 => 'admob_banner',
+        3 => 'admob_interstitial',
+        4 => 'admob_app_open',
+        5 => 'admob_reward',
+    ];
+
+    /**
+     * Ringkasan iklan untuk aplikasi mobile:
      *   - gambar : `{type: "image", image, link}`
-     *   - AdMob  : `{type: "admob", admob_unit}` (dari ads_kind=1)
+     *   - AdMob  : `{type: "admob"|"admob_banner"|"admob_interstitial"|"admob_app_open"|"admob_reward", admob_unit}`
      * Iklan skrip/embed web (HTML/iframe) diabaikan.
      */
     protected function adMobile(?object $ad): ?array
@@ -160,13 +173,17 @@ abstract class BaseApiController extends Controller
             return null;
         }
 
-        if ((int) ($ad->ads_kind ?? 0) === 1) {
+        $kind = (int) ($ad->ads_kind ?? 0);
+        if ($kind > 0) {
             $unit = trim((string) ($ad->ads_admob_unit ?? ''));
             if ($unit === '') {
                 return null;
             }
 
-            return ['type' => 'admob', 'admob_unit' => $unit];
+            return [
+                'type' => self::ADMOB_KINDS[$kind] ?? 'admob',
+                'admob_unit' => $unit,
+            ];
         }
 
         // Selain AdMob, hanya iklan gambar yang bisa dirender di aplikasi.
