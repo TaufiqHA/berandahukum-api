@@ -18,9 +18,19 @@ use Illuminate\Support\Str;
  */
 abstract class BaseApiController extends Controller
 {
+    /**
+     * Logo default situs yang tersimpan sebagai `article_img` pada artikel
+     * yang sebenarnya tidak punya gambar. Dianggap sebagai "tanpa gambar"
+     * agar tidak dikirim ke aplikasi (lihat juga article_detail.blade.php).
+     */
+    protected const DEFAULT_ARTICLE_IMAGES = ['beranda-hukum.jpg', 'beranda_hukum_square.png'];
+
     protected function image(?string $file): ?string
     {
         if (empty($file)) {
+            return null;
+        }
+        if (in_array($file, self::DEFAULT_ARTICLE_IMAGES, true)) {
             return null;
         }
         if (str_starts_with($file, 'http')) {

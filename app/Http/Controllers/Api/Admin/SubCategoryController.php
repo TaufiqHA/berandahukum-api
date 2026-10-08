@@ -50,22 +50,22 @@ class SubCategoryController extends AdminApiController
         return $this->message('Sub kategori berhasil dihapus.');
     }
 
-    /** Simpan urutan sub-kategori hasil geser. Body: { position: [id, id, ...] } */
+    /** Simpan urutan sub-kategori hasil geser. Body: { category_id, position: [id, id, ...] } */
     public function urutan(Request $request)
     {
+        $categoryId = (int) $request->input('category_id');
         $position = array_values(array_map('intval', (array) $request->input('position', [])));
 
+        // Penomoran per kategori, sama seperti website
+        // (Admin\SubCategoryController::urutanSave). Kategori lain tidak ikut
+        // dinomori ulang agar setelan tetap konsisten dengan website.
         foreach ($position as $i => $id) {
-            SubCategory::where('sub_category_id', $id)->update(['urutan' => $i + 1]);
+            $query = SubCategory::where('sub_category_id', $id);
+            if ($categoryId > 0) {
+                $query->where('category_id', $categoryId);
+            }
+            $query->update(['urutan' => $i + 1]);
         }
-
-        // Sisa sub-kategori diletakkan setelahnya agar urutan lama (0) tidak
-        // menyerobot posisi teratas. Pengurutan tetap difilter per kategori.
-        $offset = count($position);
-        SubCategory::whereNotIn('sub_category_id', $position)
-            ->orderBy('urutan')->orderBy('sub_category_id')
-            ->pluck('sub_category_id')
-            ->each(fn ($id, $k) => SubCategory::where('sub_category_id', $id)->update(['urutan' => $offset + $k + 1]));
 
         return $this->message('Urutan sub kategori disimpan.');
     }

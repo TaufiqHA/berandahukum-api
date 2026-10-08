@@ -34,13 +34,15 @@ class HomeController extends BaseApiController
             ->get()->map(fn ($a) => $this->articleSummary($a->toArray()))->all();
 
         // Kategori + sub-kategori (hanya yang ditampilkan) untuk kartu accordion.
-        $categories = Category::where('category_show', 'yes')->orderBy('urutan')->get()->map(fn ($c) => [
+        // Urutannya mengikuti setelan admin yang sama dengan website
+        // (FrontService::categories / sideSubCategories): kolom `urutan`.
+        $categories = Category::where('category_show', 'yes')->orderBy('urutan')->orderBy('category_id')->get()->map(fn ($c) => [
             'id' => (int) $c->category_id,
             'name' => $c->category_name,
             'uri' => $c->category_uri,
             'sub_count' => SubCategory::where('category_id', $c->category_id)->where('sub_category_show', 'yes')->count(),
             'subs' => SubCategory::where('category_id', $c->category_id)->where('sub_category_show', 'yes')
-                ->orderBy('sub_category_id')->get()->map(fn ($s) => [
+                ->orderBy('urutan')->orderBy('sub_category_id')->get()->map(fn ($s) => [
                     'id' => (int) $s->sub_category_id,
                     'name' => $s->sub_category_name,
                     'uri' => $s->sub_category_uri,
