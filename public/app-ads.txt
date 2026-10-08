@@ -1,0 +1,5 @@
+# app-ads.txt untuk aplikasi "Beranda Hukum"
+# Wajib dapat diakses di: https://berandahukum.com/app-ads.txt
+# Publisher ID AdMob: pub-4526658832356207
+# (cocok dengan AdMob Application ID ca-app-pub-4526658832356207~7058948475)
+google.com, pub-4526658832356207, DIRECT, f08c47fec0942fa0
