@@ -10,7 +10,7 @@
             <select name="categoryName" class="form-control" required>
                 <option value="">-- pilih --</option>
                 @foreach ($categories as $c)
-                    <option value="{{ $c->category_id }}" @selected(($row->category_id ?? '') == $c->category_id)>{{ $c->category_name }}</option>
+                    <option value="{{ $c->category_id }}" @selected(old('categoryName', $row->category_id ?? '') == $c->category_id)>{{ $c->category_name }}</option>
                 @endforeach
             </select>
         </div>

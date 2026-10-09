@@ -6,7 +6,9 @@ use App\Models\Article;
 use App\Models\ArticleCategory;
 use App\Models\Category;
 use App\Models\SubCategory;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class SubCategoryController extends AdminApiController
 {
@@ -31,14 +33,29 @@ class SubCategoryController extends AdminApiController
 
     public function store(Request $request)
     {
-        SubCategory::create($this->payload($request, true));
+        $data = $this->payload($request, true);
+        $this->ensureUnique($data);
+
+        try {
+            SubCategory::create($data);
+        } catch (QueryException $e) {
+            $this->failWhenDuplicate($e, $data['sub_category_name']);
+        }
 
         return $this->message('Sub kategori berhasil disimpan.', 201);
     }
 
     public function update(Request $request, $id)
     {
-        SubCategory::findOrFail($id)->update($this->payload($request));
+        $row = SubCategory::findOrFail($id);
+        $data = $this->payload($request);
+        $this->ensureUnique($data, $row->sub_category_id);
+
+        try {
+            $row->update($data);
+        } catch (QueryException $e) {
+            $this->failWhenDuplicate($e, $data['sub_category_name']);
+        }
 
         return $this->message('Sub kategori berhasil diubah.');
     }
@@ -157,5 +174,51 @@ class SubCategoryController extends AdminApiController
     private function nextUrutan(): int
     {
         return ((int) SubCategory::max('urutan')) + 1;
+    }
+
+    /**
+     * Pastikan nama sub-kategori tidak menghasilkan URI yang sudah dipakai
+     * (kolom sub_category_uri bersifat unik). Bila bentrok, kembalikan pesan
+     * yang menyebutkan kategori pemiliknya alih-alih error 500.
+     */
+    private function ensureUnique(array $data, ?int $ignoreId = null): void
+    {
+        $query = SubCategory::where('sub_category_uri', $data['sub_category_uri']);
+
+        if ($ignoreId) {
+            $query->where('sub_category_id', '!=', $ignoreId);
+        }
+
+        $existing = $query->first();
+
+        if (! $existing) {
+            return;
+        }
+
+        $category = Category::find($existing->category_id);
+        $categoryName = $category->category_name ?? 'kategori lain';
+
+        throw ValidationException::withMessages([
+            'name' => 'Sub kategori "'.$data['sub_category_name'].'" sudah terdaftar'
+                .' pada kategori "'.$categoryName.'". Silakan gunakan nama sub kategori yang lain.',
+        ]);
+    }
+
+    /**
+     * Penjaga terakhir bila ada dua permintaan bersamaan: ubah error database
+     * "Duplicate entry" menjadi pesan validasi yang informatif.
+     */
+    private function failWhenDuplicate(QueryException $e, string $name): never
+    {
+        $isDuplicate = (int) ($e->errorInfo[1] ?? 0) === 1062
+            || str_contains($e->getMessage(), 'Duplicate entry');
+
+        if (! $isDuplicate) {
+            throw $e;
+        }
+
+        throw ValidationException::withMessages([
+            'name' => 'Sub kategori "'.$name.'" sudah terdaftar. Silakan gunakan nama sub kategori yang lain.',
+        ]);
     }
 }
