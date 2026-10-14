@@ -176,6 +176,11 @@ p { margin: 0 0 1em; text-wrap: pretty; }
 .story--feature .story__media img { aspect-ratio: 16 / 9; }
 .story--feature .story__title { font-size: 1.6rem; }
 
+/* ============ Hasil pencarian (tanpa gambar) ============ */
+.search-list { border-top: 2px solid var(--n-900); }
+.search-item { padding: var(--s4) 0; border-bottom: 1px solid var(--n-200); }
+.search-item .story__title { margin-top: 0; }
+
 /* ============ Ranked list (Most read) ============ */
 .ranked { list-style: none; margin: 0; padding: 0; counter-reset: r; }
 .ranked li { counter-increment: r; display: grid; grid-template-columns: 2.4rem 1fr; gap: var(--s3); align-items: start; padding: var(--s3) 0; border-top: 1px solid var(--n-200); }

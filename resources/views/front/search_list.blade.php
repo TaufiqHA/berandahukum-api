@@ -12,16 +12,11 @@
             <p class="muted">{{ $heading }}</p>
 
             @if (count($articles))
-                <div class="grid grid--2">
+                <div class="search-list">
                     @foreach ($articles as $a)
-                        <article class="story">
-                            <a class="story__media" href="{{ site_url('a/'.$a['article_uri']) }}">
-                                <img src="{{ article_image($a['article_img'] ?? null) }}" alt="{{ $a['article_title'] }}" loading="lazy">
-                            </a>
-                            <div class="story__body">
-                                <h3 class="story__title"><a href="{{ site_url('a/'.$a['article_uri']) }}">{{ $a['article_title'] }}</a></h3>
-                                <p class="story__meta"><time>{{ format_tanggal($a['article_date'] ?? '', 'ins') }}</time></p>
-                            </div>
+                        <article class="search-item">
+                            <h3 class="story__title"><a href="{{ site_url('a/'.$a['article_uri']) }}">{{ $a['article_title'] }}</a></h3>
+                            <p class="story__meta"><time>{{ format_tanggal($a['article_date'] ?? '', 'ins') }}</time></p>
                         </article>
                     @endforeach
                 </div>
