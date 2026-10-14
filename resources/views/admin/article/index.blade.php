@@ -51,7 +51,7 @@
 
     <div class="table-responsive">
         <table class="table table-sm table-striped">
-            <thead><tr><th>#</th><th>Judul</th><th>Kategori</th><th>Sub Kategori</th><th>Label</th><th>Status</th><th>Tanggal</th><th class="text-center">View</th><th class="text-right">Aksi</th></tr></thead>
+            <thead><tr><th>#</th><th>Judul</th><th>Kategori</th><th>Sub Kategori</th><th>Label</th><th>Status</th><th>Tanggal</th><th class="text-center" aria-sort="{{ request('sort') === 'views_asc' ? 'ascending' : (request('sort') === 'views_desc' ? 'descending' : 'none') }}">@php $nextSort = request('sort') === 'views_desc' ? 'views_asc' : 'views_desc'; @endphp<a class="th-sort{{ in_array(request('sort'), ['views_asc', 'views_desc'], true) ? ' is-active' : '' }}" href="{{ request()->fullUrlWithQuery(['sort' => $nextSort, 'page' => null]) }}" title="{{ request('sort') === 'views_desc' ? 'Urutkan dari tersedikit ke terbanyak' : 'Urutkan dari terbanyak ke tersedikit' }}">View <i class="fa {{ request('sort') === 'views_asc' ? 'fa-sort-asc' : (request('sort') === 'views_desc' ? 'fa-sort-desc' : 'fa-sort') }}" aria-hidden="true"></i></a></th><th class="text-right">Aksi</th></tr></thead>
             <tbody>
             @foreach ($articles as $r)
                 <tr>

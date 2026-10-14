@@ -179,6 +179,11 @@ body.admin {
 .table-hover tbody tr:hover { background: var(--n-50); }
 .table-responsive { overflow-x: auto; }
 
+/* Tautan urutkan di header tabel (mis. kolom View) */
+.th-sort { display: inline-flex; align-items: center; gap: 4px; color: inherit; }
+.th-sort:hover { color: var(--brand); text-decoration: none; }
+.th-sort i { font-size: .85rem; }
+
 /* ---------- Tombol (override Bootstrap) ---------- */
 .btn {
     display: inline-flex; align-items: center; justify-content: center; gap: var(--s2);

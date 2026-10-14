@@ -21,7 +21,7 @@ class ArticleController extends Controller
 
     public function index(Request $request)
     {
-        $query = Article::orderByDesc('article_id');
+        $query = Article::query();
 
         if ($request->filled('q')) {
             $query->where('article_title', 'like', '%'.$request->input('q').'%');
@@ -55,6 +55,16 @@ class ArticleController extends Controller
 
         if ($request->filled('status')) {
             $query->where('article_status', (int) $request->input('status'));
+        }
+
+        // Urutkan berdasar jumlah view (tombol di header kolom View); default
+        // tetap artikel terbaru lebih dulu.
+        if ($request->input('sort') === 'views_asc') {
+            $query->orderBy('article_views')->orderByDesc('article_id');
+        } elseif ($request->input('sort') === 'views_desc') {
+            $query->orderByDesc('article_views')->orderByDesc('article_id');
+        } else {
+            $query->orderByDesc('article_id');
         }
 
         $articles = $query->paginate(20)->withQueryString();
