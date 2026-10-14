@@ -51,7 +51,7 @@
 
     <div class="table-responsive">
         <table class="table table-sm table-striped">
-            <thead><tr><th>#</th><th>Judul</th><th>Kategori</th><th>Sub Kategori</th><th>Label</th><th>Status</th><th>Tanggal</th><th class="text-right">Aksi</th></tr></thead>
+            <thead><tr><th>#</th><th>Judul</th><th>Kategori</th><th>Sub Kategori</th><th>Label</th><th>Status</th><th>Tanggal</th><th class="text-center">View</th><th class="text-right">Aksi</th></tr></thead>
             <tbody>
             @foreach ($articles as $r)
                 <tr>
@@ -70,10 +70,12 @@
                         @endif
                     </td>
                     <td>{{ $r->article_date }}</td>
+                    <td class="text-center">
+                        <a href="{{ site_admin('article/preview/'.$r->article_id) }}" target="_blank" rel="noopener" class="btn btn-outline-secondary btn-sm text-nowrap" title="Lihat pratinjau artikel"><i class="fa fa-eye"></i> View</a>
+                    </td>
                     <td class="text-right">
                         <div class="admin-actions">
                             <a href="{{ site_admin('article/edit/'.$r->article_id) }}" class="btn-icon" title="Ubah"><i class="fa fa-pencil"></i></a>
-                            <a href="{{ site_admin('article/preview/'.$r->article_uri) }}" target="_blank" class="btn-icon" title="Preview"><i class="fa fa-external-link"></i></a>
                             <a href="{{ site_admin('article/comment/'.$r->article_id) }}" class="btn-icon" title="Komentar"><i class="fa fa-comments-o"></i></a>
                             <a href="{{ site_admin('article/referensi/'.$r->article_id) }}" class="btn-icon" title="Referensi"><i class="fa fa-book"></i></a>
                             @if ($r->article_status == 1)

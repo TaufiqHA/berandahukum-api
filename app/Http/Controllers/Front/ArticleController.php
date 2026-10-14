@@ -27,6 +27,27 @@ class ArticleController extends Controller
 
         DB::table('tbl_article')->where('article_id', $article->article_id)->increment('article_views');
 
+        return view('front.article_detail', $this->viewData($article));
+    }
+
+    /**
+     * Pratinjau artikel dari panel admin. Menampilkan artikel apa pun statusnya
+     * (termasuk draft/nonaktif) memakai halaman detail publik, tanpa menambah
+     * penghitung "x dibaca".
+     */
+    public function preview(int $id)
+    {
+        return view('front.article_detail', $this->viewData(Article::findOrFail($id)));
+    }
+
+    /**
+     * Data yang dibutuhkan halaman detail artikel (dipakai oleh tampilan publik
+     * maupun pratinjau admin).
+     *
+     * @return array<string, mixed>
+     */
+    private function viewData(Article $article): array
+    {
         $a = $article->toArray();
         $authorName = optional(User::find($a['article_created_by']))->user_name ?? 'Admin';
 
@@ -48,7 +69,7 @@ class ArticleController extends Controller
         $comments = Comment::where('article_id', $a['article_id'])
             ->where('comment_status', '1')->get()->toArray();
 
-        return view('front.article_detail', [
+        return [
             'title' => $a['article_title'].' - Beranda Hukum',
             'article' => $a,
             'admin_name' => $authorName,
@@ -60,7 +81,7 @@ class ArticleController extends Controller
             'og_title' => $a['article_title'].' - Beranda Hukum',
             'og_description' => substr(strip_tags($a['article_content'] ?? ''), 0, 250),
             'og_url' => site_url('a/'.$a['article_uri']),
-        ]);
+        ];
     }
 
     public function kategori(string $uri)

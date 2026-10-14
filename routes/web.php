@@ -58,6 +58,10 @@ Route::middleware('front.share')->group(function () {
     Route::get('/l/{uri}', [ArticleController::class, 'label']);
     Route::get('/article/{uri}', [ArticleController::class, 'detail']);
 
+    // Pratinjau artikel oleh admin — bisa membuka artikel draft/nonaktif.
+    Route::middleware('auth')->get('/preview/{id}', [ArticleController::class, 'preview'])
+        ->whereNumber('id')->name('article.preview');
+
     Route::get('/search', [SearchController::class, 'index']);
 
     Route::get('/rss', [RssController::class, 'index']);
@@ -106,7 +110,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('article/delete/{id}', [AdminArticleController::class, 'destroy']);
     Route::get('article/publish/{id}', [AdminArticleController::class, 'publish']);
     Route::get('article/draft/{id}', [AdminArticleController::class, 'draft']);
-    Route::get('article/preview/{uri}', [AdminArticleController::class, 'preview']);
+    Route::get('article/preview/{id}', [AdminArticleController::class, 'preview'])->whereNumber('id');
     Route::get('article/comment/{id}', [AdminArticleController::class, 'comment']);
     Route::get('article/publish-komentar/{id}', [AdminArticleController::class, 'publishComment']);
     Route::get('article/unpublish-komentar/{id}', [AdminArticleController::class, 'unpublishComment']);

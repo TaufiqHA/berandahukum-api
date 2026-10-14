@@ -170,9 +170,11 @@ class ArticleController extends Controller
         return redirect(site_admin('article'))->with('msg_flash', success_message('Artikel diubah ke draft.'));
     }
 
-    public function preview($uri)
+    public function preview($id)
     {
-        return redirect(site_url('a/'.$uri));
+        // Pratinjau memakai halaman detail publik, tetapi boleh membuka artikel
+        // yang belum terbit (draft/nonaktif) — lihat Front\ArticleController.
+        return redirect()->route('article.preview', $id);
     }
 
     public function comment($id)
