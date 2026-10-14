@@ -6,6 +6,9 @@
         {{-- Header artikel: dipisah ke baris grid sendiri agar sidebar (kolom
              kanan) mulai sejajar dengan gambar artikel. --}}
         <div class="article-head">
+            {{-- Iklan banner atas halaman artikel (posisi 9). --}}
+            @include('partials.ad', ['ad' => $frontService->getArticleById(9)])
+
             @if (!empty($article['label_id']))
                 @php $lbl = \App\Models\Label::find($article['label_id']); @endphp
                 @if ($lbl)
@@ -72,6 +75,9 @@
                     </section>
                 @endif
             </article>
+
+            {{-- Iklan bawah isi artikel, sebelum "Artikel Terkait" (posisi 10). --}}
+            @include('partials.ad', ['ad' => $frontService->getArticleById(10)])
 
             @if (!empty($related_post))
                 <hr class="rule">

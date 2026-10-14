@@ -325,6 +325,9 @@ p { margin: 0 0 1em; text-wrap: pretty; }
 .ad { margin: var(--s5) 0; }
 .ad--inline { display: flex; justify-content: center; }
 .ad iframe { width: 100%; }
+/* Banner atas halaman artikel (posisi 9): menempel di atas judul, gambar di tengah. */
+.article-head > .ad { margin-top: 0; }
+.article-head > .ad img { margin-left: auto; margin-right: auto; }
 
 /* ============ Footer ============ */
 .site-footer { border-top: 4px solid var(--n-900); background: var(--n-25); margin-top: var(--s8); }

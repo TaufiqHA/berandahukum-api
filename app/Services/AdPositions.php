@@ -29,6 +29,8 @@ class AdPositions
             6 => 'Beranda — kolom kanan, sejajar posisi 5 (D: website)',
             7 => 'Beranda — bawah, setelah bagian Quote (D: website)',
             8 => 'Sidebar & tile beranda — iklan 1 (D: website)',
+            9 => 'Halaman artikel — banner atas, tepat di bawah menu (D: website)',
+            10 => 'Halaman artikel — bawah isi, sebelum bagian "Artikel Terkait" (D: website)',
             17 => 'Sidebar & tile beranda — iklan 5 (D: website)',
             18 => 'Sidebar & tile beranda — iklan 6 (D: website)',
             19 => 'Sidebar & tile beranda — iklan 7 (DM: website + aplikasi)',
