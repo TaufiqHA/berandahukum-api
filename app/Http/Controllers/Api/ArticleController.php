@@ -29,10 +29,9 @@ class ArticleController extends BaseApiController
             $query->where('label_id', $label->label_id ?? 0);
         }
         if ($request->filled('q')) {
-            $q = $request->input('q');
-            $query->where(function ($w) use ($q) {
-                $w->where('article_title', 'like', '%'.$q.'%')->orWhere('article_content', 'like', '%'.$q.'%');
-            });
+            // Hanya judul: isi artikel lama berisi HTML panjang yang menyebut
+            // banyak topik lain, sehingga pencarian isi memunculkan hasil keliru.
+            $query->where('article_title', 'like', '%'.$request->input('q').'%');
         }
 
         $sort = $request->input('sort', 'date');

@@ -10,14 +10,14 @@ class SearchController extends Controller
 {
     public function index(Request $request)
     {
-        $q = $request->query('q', '');
+        $q = trim((string) $request->query('q', ''));
 
         $articles = Article::where('article_status', 1)
             ->when($q !== '', function ($query) use ($q) {
-                $query->where(function ($w) use ($q) {
-                    $w->where('article_title', 'like', '%'.$q.'%')
-                        ->orWhere('article_content', 'like', '%'.$q.'%');
-                });
+                // Pencarian hanya mencocokkan judul. Kolom article_content berisi
+                // HTML impor yang sangat panjang dan menyebut banyak topik lain,
+                // sehingga pencarian isi memunculkan artikel yang tidak relevan.
+                $query->where('article_title', 'like', '%'.$q.'%');
             })
             ->orderByDesc('article_id')
             ->paginate(10)
