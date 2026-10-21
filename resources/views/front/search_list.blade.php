@@ -17,6 +17,9 @@
                         <article class="search-item">
                             <h3 class="story__title"><a href="{{ site_url('a/'.$a['article_uri']) }}">{{ $a['article_title'] }}</a></h3>
                             <p class="story__meta"><time>{{ format_tanggal($a['article_date'] ?? '', 'ins') }}</time></p>
+                            @if (! empty($a['excerpt_html']))
+                                <p class="search-item__excerpt">{!! $a['excerpt_html'] !!}</p>
+                            @endif
                         </article>
                     @endforeach
                 </div>

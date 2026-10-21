@@ -7,12 +7,13 @@ use App\Models\ArticleCategory;
 use App\Models\Category;
 use App\Models\Label;
 use App\Models\SubCategory;
+use App\Services\ArticleSearch;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class ArticleController extends BaseApiController
 {
-    public function index(Request $request)
+    public function index(Request $request, ArticleSearch $search)
     {
         $query = Article::query()->where('article_status', 1);
 
@@ -28,10 +29,18 @@ class ArticleController extends BaseApiController
             $label = Label::where('label_uri', $request->input('label'))->first();
             $query->where('label_id', $label->label_id ?? 0);
         }
-        if ($request->filled('q')) {
-            // Hanya judul: isi artikel lama berisi HTML panjang yang menyebut
-            // banyak topik lain, sehingga pencarian isi memunculkan hasil keliru.
-            $query->where('article_title', 'like', '%'.$request->input('q').'%');
+
+        $rawQuery = $request->input('q');
+        $q = is_string($rawQuery) ? mb_substr(trim($rawQuery), 0, ArticleSearch::MAX_QUERY_LENGTH) : '';
+        $terms = $search->terms($q);
+
+        if ($terms !== []) {
+            // Cari di judul dan isi artikel (isi sudah berupa teks bersih).
+            $search->apply($query, $terms);
+            $search->orderByRelevance($query, $terms);
+        } elseif ($q !== '') {
+            // Query hanya berisi wildcard/tanda baca: hasil kosong, bukan semua.
+            $query->whereRaw('1 = 0');
         }
 
         $sort = $request->input('sort', 'date');
@@ -41,8 +50,32 @@ class ArticleController extends BaseApiController
             $query->orderByDesc('article_date')->orderByDesc('article_id');
         }
 
+        if ($terms !== []) {
+            // article_content tidak diperlukan karena excerpt hasil pencarian
+            // diambil dari article_search_text yang jauh lebih ringkas.
+            $query->select([
+                'article_id',
+                'label_id',
+                'article_uri',
+                'article_title',
+                'article_date',
+                'article_author',
+                'article_img',
+                'article_views',
+                'article_search_text',
+            ]);
+        }
+
         $paginator = $query->paginate((int) $request->input('per_page', 12))
-            ->through(fn ($a) => $this->articleSummary($a->toArray()));
+            ->through(function (Article $article) use ($search, $terms): array {
+                $summary = $this->articleSummary($article->toArray());
+
+                if ($terms !== []) {
+                    $summary['excerpt'] = $search->snippet($article->article_search_text, $terms);
+                }
+
+                return $summary;
+            });
 
         return response()->json($paginator);
     }

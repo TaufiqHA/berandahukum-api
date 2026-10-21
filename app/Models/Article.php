@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\ArticleSearchText;
 use Illuminate\Database\Eloquent\Model;
 
 class Article extends Model
@@ -13,6 +14,19 @@ class Article extends Model
     public $timestamps = false;
 
     protected $guarded = [];
+
+    /**
+     * Jaga kolom teks pencarian tetap sinkron dengan HTML artikel. Dengan
+     * begitu panel admin web maupun API mobile tidak perlu mengisinya manual.
+     */
+    protected static function booted(): void
+    {
+        static::saving(function (self $article): void {
+            if (! $article->exists || $article->isDirty('article_content')) {
+                $article->article_search_text = ArticleSearchText::fromHtml($article->article_content);
+            }
+        });
+    }
 
     /**
      * Cari artikel terbit berdasarkan URI.

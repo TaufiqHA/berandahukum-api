@@ -180,6 +180,8 @@ p { margin: 0 0 1em; text-wrap: pretty; }
 .search-list { border-top: 2px solid var(--n-900); }
 .search-item { padding: var(--s4) 0; border-bottom: 1px solid var(--n-200); }
 .search-item .story__title { margin-top: 0; }
+.search-item__excerpt { margin: var(--s2) 0 0; color: var(--n-600); font-size: .92rem; line-height: 1.55; }
+.search-item__excerpt mark { background: #fde68a; color: var(--n-900); padding: 0 .1em; }
 
 /* ============ Ranked list (Most read) ============ */
 .ranked { list-style: none; margin: 0; padding: 0; counter-reset: r; }
