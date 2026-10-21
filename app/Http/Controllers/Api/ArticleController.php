@@ -15,6 +15,20 @@ class ArticleController extends BaseApiController
 {
     public function index(Request $request, ArticleSearch $search)
     {
+        return $this->listing($request, $search, false);
+    }
+
+    /**
+     * Pencarian artikel untuk aplikasi mobile. Berbeda dari daftar artikel
+     * biasa: gambar tidak dikirim dan excerpt dilengkapi segmen highlight.
+     */
+    public function search(Request $request, ArticleSearch $search)
+    {
+        return $this->listing($request, $search, true);
+    }
+
+    private function listing(Request $request, ArticleSearch $search, bool $searchMode)
+    {
         $query = Article::query()->where('article_status', 1);
 
         if ($request->filled('category')) {
@@ -67,11 +81,17 @@ class ArticleController extends BaseApiController
         }
 
         $paginator = $query->paginate((int) $request->input('per_page', 12))
-            ->through(function (Article $article) use ($search, $terms): array {
+            ->through(function (Article $article) use ($search, $terms, $searchMode): array {
                 $summary = $this->articleSummary($article->toArray());
 
+                if ($searchMode) {
+                    unset($summary['image']);
+                }
+
                 if ($terms !== []) {
-                    $summary['excerpt'] = $search->snippet($article->article_search_text, $terms);
+                    $excerpt = $search->snippet($article->article_search_text, $terms);
+                    $summary['excerpt'] = $excerpt;
+                    $summary['excerpt_segments'] = $search->segments($excerpt, $terms);
                 }
 
                 return $summary;

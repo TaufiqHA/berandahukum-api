@@ -9,6 +9,6 @@ class SearchController extends BaseApiController
 {
     public function index(Request $request, ArticleController $articles, ArticleSearch $search)
     {
-        return $articles->index($request, $search);
+        return $articles->search($request, $search);
     }
 }

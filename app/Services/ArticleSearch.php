@@ -143,6 +143,36 @@ final class ArticleSearch
     }
 
     /**
+     * Pecah snippet menjadi segmen teks dengan penanda kata kunci. Dipakai
+     * aplikasi mobile agar bisa mewarnai kata tanpa harus merender HTML.
+     *
+     * @param  list<string>  $terms
+     * @return list<array{text: string, highlight: bool}>
+     */
+    public function segments(string $snippet, array $terms): array
+    {
+        if ($snippet === '') {
+            return [];
+        }
+
+        $terms = $this->highlightTerms($terms);
+        if ($terms === []) {
+            return [['text' => $snippet, 'highlight' => false]];
+        }
+
+        $pattern = $this->highlightPattern($terms);
+        $parts = preg_split($pattern, $snippet, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY) ?: [$snippet];
+
+        return array_map(
+            fn (string $part): array => [
+                'text' => $part,
+                'highlight' => preg_match($pattern, $part) === 1,
+            ],
+            $parts
+        );
+    }
+
+    /**
      * Versi HTML snippet dengan kata kunci disorot. Teks di-escape sebelum
      * dibungkus <mark> agar aman dari XSS.
      *
@@ -153,29 +183,37 @@ final class ArticleSearch
         if ($snippet === '') {
             return '';
         }
-        if ($terms === []) {
-            return e($snippet);
+
+        $html = '';
+        foreach ($this->segments($snippet, $terms) as $segment) {
+            $html .= $segment['highlight']
+                ? '<mark>'.e($segment['text']).'</mark>'
+                : e($segment['text']);
         }
 
+        return $html;
+    }
+
+    /**
+     * @param  list<string>  $terms
+     * @return list<string>
+     */
+    private function highlightTerms(array $terms): array
+    {
         $terms = array_values(array_filter($terms, fn (string $term): bool => $term !== ''));
-        if ($terms === []) {
-            return e($snippet);
-        }
 
         // Kata yang lebih panjang didahulukan agar "1074 K/PDT" tidak terpotong
         // menjadi kecocokan yang lebih pendek.
         usort($terms, fn (string $a, string $b): int => mb_strlen($b) <=> mb_strlen($a));
 
-        $pattern = '/('.implode('|', array_map(fn (string $term): string => preg_quote($term, '/'), $terms)).')/iu';
-        $parts = preg_split($pattern, $snippet, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY) ?: [$snippet];
+        return $terms;
+    }
 
-        $html = '';
-        foreach ($parts as $part) {
-            $html .= preg_match($pattern, $part) === 1
-                ? '<mark>'.e($part).'</mark>'
-                : e($part);
-        }
-
-        return $html;
+    /**
+     * @param  list<string>  $terms
+     */
+    private function highlightPattern(array $terms): string
+    {
+        return '/('.implode('|', array_map(fn (string $term): string => preg_quote($term, '/'), $terms)).')/iu';
     }
 }
