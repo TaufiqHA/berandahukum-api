@@ -288,6 +288,10 @@ p { margin: 0 0 1em; text-wrap: pretty; }
 .article__body a { color: var(--brand-strong); text-decoration: underline; text-underline-offset: 2px; }
 .article__body pre { background: var(--n-50); border: 1px solid var(--n-200); padding: var(--s4); overflow-x: auto; }
 
+/* Sorotan hasil pencarian di dalam artikel (form pencarian header). */
+.article__body mark.find-hit { background: #fde68a; color: var(--n-900); padding: 0 .08em; border-radius: var(--r-sm); }
+.article__body mark.find-hit.is-current { background: var(--brand); color: #fff; }
+
 /* ============ Buttons & forms ============ */
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--s2); padding: 11px 18px; font-size: .78rem; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; border: 1px solid var(--n-900); background: var(--n-0); color: var(--n-900); cursor: pointer; }
 .btn:hover { background: var(--n-900); color: #fff; text-decoration: none; }

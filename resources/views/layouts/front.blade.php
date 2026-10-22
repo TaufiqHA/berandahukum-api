@@ -21,7 +21,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="{{ base_url('favicon-32x32.png?v=2') }}" />
     <link rel="apple-touch-icon" sizes="180x180" href="{{ base_url('apple-touch-icon.png?v=2') }}" />
     <link rel="stylesheet" href="{{ base_url('assets/font-awesome/css/font-awesome.min.css') }}">
-    <link rel="stylesheet" href="{{ url("css/site.css?v=31") }}">
+    <link rel="stylesheet" href="{{ url("css/site.css?v=32") }}">
 </head>
 <body>
     <a class="skip-link" href="#content">Lewati ke konten</a>

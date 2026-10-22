@@ -147,5 +147,132 @@
                 form.reset();
             });
     });
+
+    // Pencarian di header mencari kata di dalam artikel yang sedang dibuka.
+    (function () {
+        var form = document.querySelector('header.site-header form.search[data-article-search]');
+        var input = document.getElementById('q');
+        var body = document.querySelector('.article__body');
+        if (!form || !input || !body) {
+            return;
+        }
+
+        var hits = [];
+        var hitIndex = -1;
+        var activeTerm = '';
+
+        var clearHits = function () {
+            body.querySelectorAll('mark.find-hit').forEach(function (mark) {
+                mark.parentNode.replaceChild(document.createTextNode(mark.textContent), mark);
+            });
+            body.normalize();
+            hits = [];
+            hitIndex = -1;
+            activeTerm = '';
+        };
+
+        var showHit = function (index) {
+            if (!hits.length) {
+                return;
+            }
+            hits.forEach(function (hit) { hit.classList.remove('is-current'); });
+            hitIndex = (index + hits.length) % hits.length;
+            var hit = hits[hitIndex];
+            hit.classList.add('is-current');
+            hit.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        };
+
+        var escapeRegExp = function (term) {
+            return term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        };
+
+        var highlight = function (term) {
+            var regex = new RegExp(escapeRegExp(term), 'gi');
+            var nodes = [];
+            var walker = document.createTreeWalker(body, NodeFilter.SHOW_TEXT, {
+                acceptNode: function (node) {
+                    if (!node.nodeValue.trim()) {
+                        return NodeFilter.FILTER_REJECT;
+                    }
+                    if (node.parentElement && node.parentElement.closest('script, style')) {
+                        return NodeFilter.FILTER_REJECT;
+                    }
+                    regex.lastIndex = 0;
+                    return regex.test(node.nodeValue) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+                }
+            });
+
+            while (walker.nextNode()) {
+                nodes.push(walker.currentNode);
+            }
+
+            nodes.forEach(function (node) {
+                var text = node.nodeValue;
+                var fragment = document.createDocumentFragment();
+                var last = 0;
+                var match;
+                regex.lastIndex = 0;
+                while ((match = regex.exec(text)) !== null) {
+                    if (match[0].length === 0) {
+                        regex.lastIndex++;
+                        continue;
+                    }
+                    fragment.appendChild(document.createTextNode(text.slice(last, match.index)));
+                    var mark = document.createElement('mark');
+                    mark.className = 'find-hit';
+                    mark.textContent = match[0];
+                    fragment.appendChild(mark);
+                    hits.push(mark);
+                    last = match.index + match[0].length;
+                }
+                fragment.appendChild(document.createTextNode(text.slice(last)));
+                node.parentNode.replaceChild(fragment, node);
+            });
+        };
+
+        form.addEventListener('submit', function (e) {
+            var term = input.value.trim();
+            if (!term) {
+                e.preventDefault();
+                clearHits();
+                return;
+            }
+
+            e.preventDefault();
+            input.setCustomValidity('');
+
+            if (term !== activeTerm || !hits.length) {
+                clearHits();
+                activeTerm = term;
+                highlight(term);
+
+                if (!hits.length) {
+                    input.setCustomValidity('Kata tidak ditemukan di artikel ini.');
+                    input.reportValidity();
+                    activeTerm = '';
+                    return;
+                }
+
+                showHit(0);
+                return;
+            }
+
+            showHit(hitIndex + 1);
+        });
+
+        input.addEventListener('input', function () {
+            input.setCustomValidity('');
+            if (!input.value.trim() && activeTerm) {
+                clearHits();
+            }
+        });
+
+        input.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                clearHits();
+                input.setCustomValidity('');
+            }
+        });
+    })();
 </script>
 @endsection
