@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex">
     <title>Lupa Password — Admin Panel</title>
+    <link rel="icon" href="{{ base_url('favicon.ico?v=2') }}" sizes="any" />
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ base_url('favicon-32x32.png?v=2') }}" />
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ base_url('apple-touch-icon.png?v=2') }}" />
     <link rel="stylesheet" href="{{ base_url('assets/css/style-admin.css?v=0.0.1') }}">
     <link rel="stylesheet" href="{{ url('css/site.css?v=1') }}">
     <link rel="stylesheet" href="{{ url('css/admin.css?v=1') }}">

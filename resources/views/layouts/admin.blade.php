@@ -6,6 +6,9 @@
     <meta name="robots" content="noindex">
     <meta name="googlebot" content="noindex">
     <title>@yield('title', 'Admin Panel') — Beranda Hukum</title>
+    <link rel="icon" href="{{ base_url('favicon.ico?v=2') }}" sizes="any" />
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ base_url('favicon-32x32.png?v=2') }}" />
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ base_url('apple-touch-icon.png?v=2') }}" />
     <link rel="stylesheet" href="{{ base_url('assets/bootstrap/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ base_url('assets/font-awesome/css/font-awesome.min.css') }}">
     <link rel="stylesheet" href="{{ base_url('assets/select2/css/select2.min.css') }}">

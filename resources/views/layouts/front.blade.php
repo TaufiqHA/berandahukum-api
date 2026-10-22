@@ -17,7 +17,9 @@
     <meta name="twitter:title" content="{{ $og_title ?? ($title ?? 'Beranda Hukum') }}" />
     <meta name="twitter:description" content="{{ $og_description ?? '' }}" />
     <meta name="twitter:site" content="@berandahukum" />
-    <link rel="icon" type="image/png" href="{{ base_url('favicon.png?v=0.0.1') }}" />
+    <link rel="icon" href="{{ base_url('favicon.ico?v=2') }}" sizes="any" />
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ base_url('favicon-32x32.png?v=2') }}" />
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ base_url('apple-touch-icon.png?v=2') }}" />
     <link rel="stylesheet" href="{{ base_url('assets/font-awesome/css/font-awesome.min.css') }}">
     <link rel="stylesheet" href="{{ url("css/site.css?v=31") }}">
 </head>

@@ -20,7 +20,9 @@
 	<meta name="twitter:title" content="{{ $og_title ?? ($title ?? 'Beranda Hukum') }}" />
 	<meta name="twitter:description" content="{{ $og_description ?? 'berandahukum.com adalah sebuah wadah dalam bentuk website yang dikelola sebagai sarana untuk belajar hukum, menambah wawasan hukum dan sarana berbagi tentang hukum.' }}" />
 	<meta name="twitter:site" content="@berandahukum" />
-    <link rel="icon" type="image/png" href="{{ base_url('favicon.png?v=0.0.1') }}" />
+    <link rel="icon" href="{{ base_url('favicon.ico?v=2') }}" sizes="any" />
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ base_url('favicon-32x32.png?v=2') }}" />
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ base_url('apple-touch-icon.png?v=2') }}" />
     {{-- CSS desain referensi (Bootstrap) — hanya untuk desktop --}}
     <link rel="stylesheet" href="{{ base_url('assets/bootstrap/css/bootstrap.min.css') }}" media="(min-width: 721px)">
     <link rel="stylesheet" href="{{ base_url('assets/select2/css/select2.min.css') }}" media="(min-width: 721px)">
